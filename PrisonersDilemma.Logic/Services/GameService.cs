@@ -19,10 +19,10 @@ namespace PrisonersDilemma.Logic.Services
         }
         public Task<Game> Play(Player firstPlayer, Player secondPlayer, int totalRounds)
         {
+            //TODO:player-strategy to limit db connections
             throw new NotImplementedException();
         }
 
-        //TODO: use repository?
         public Task SaveGame(string populationId)
         {
             throw new NotImplementedException();

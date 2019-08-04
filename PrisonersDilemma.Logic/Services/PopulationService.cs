@@ -9,14 +9,20 @@ namespace PrisonersDilemma.Logic.Services
 {
     public class PopulationService : IPopulationService
     {
-        private readonly IGameService _gameService;
+        private readonly IPopulationRepository _populationRepository;
+        private readonly IGameService _gameService;        
 
-        public PopulationService(IPopulationRepository populationRepository, IGameService gameService, List<Player> players)
+        public PopulationService(IPopulationRepository populationRepository, IGameService gameService, 
+            List<Player> players)//TODO:IoC?
         {
+            _populationRepository = populationRepository;
             _gameService = gameService;            
         }
+        
         public Task Evaluate()
         {
+            //play
+            //save
             throw new NotImplementedException();
         }
 

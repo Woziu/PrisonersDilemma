@@ -10,16 +10,21 @@ namespace PrisonersDilemma.Logic.Services
     public class SimulationService : ISimulationService
     {
         private readonly IPopulationService _populationService;
-
-        public int SimulationsLimit { get; set; }
-
-        public SimulationService(ISimulationRepository simulationRepository, IPopulationService populationService, List<Player> players, int simulationsLimit)
+        //TODO: PlayerManager/PlayerService 
+        public SimulationService(ISimulationRepository simulationRepository, IPopulationService populationService, 
+            List<Player> players, int simulationsLimit)//TODO: IoC?
         {
             _populationService = populationService;
-            this.SimulationsLimit = simulationsLimit;
         }
         public Task Run()
         {
+            //save players list to DB??
+            
+            //loop
+            //evaluate
+            //get new population
+            
+            //save winner to DB?
             throw new NotImplementedException();
         }
     }
