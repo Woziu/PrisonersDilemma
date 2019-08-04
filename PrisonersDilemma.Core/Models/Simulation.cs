@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PrisonersDilemma.Core.Models
 {
-    class Simulation
+    public class Simulation
     {
         public int Id { get; set; }
         public DateTime StartDate { get; set; }

@@ -7,9 +7,8 @@ namespace PrisonersDilemma.Core.Models
 {
     public class Round
     {
-        public int Id { get; set; }        
-        public MoveType FirstPlayerMove { get; set; }
-        public MoveType SecondPlayerMove { get; set; }
+        public int Id { get; set; }
+        public List<PlayerMove> PlayersMoves { get; set; }        
         public int FirstPlayerScore { get; set; }
         public int SecondPlayerScore { get; set; }
     }
