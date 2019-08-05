@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace PrisonersDilemma.Logic.Services
 {
-    interface ISimulationService
+    public interface ISimulationService
     {
         Task Run();
     }
