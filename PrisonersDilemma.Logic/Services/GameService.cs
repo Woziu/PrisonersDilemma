@@ -52,7 +52,7 @@ namespace PrisonersDilemma.Logic.Services
                 secondPlayerMove
             };
 
-            round.SecondPlayerScore += _gameSettings.MoveModifier;
+            round.FirstPlayerScore += _gameSettings.MoveModifier;
             round.SecondPlayerScore += _gameSettings.MoveModifier;
 
             if (firstPlayerMove.Type == MoveType.Cooperate)
