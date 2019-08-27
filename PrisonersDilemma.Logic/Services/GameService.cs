@@ -24,13 +24,13 @@ namespace PrisonersDilemma.Logic.Services
         public async Task<Game> PlayAsync(Player firstPlayer, Player secondPlayer, int totalRounds)
         {            
             var rounds = new List<Round>();
-            for (int i = 0; i < totalRounds; i++)
+            for (int i = 1; i <= totalRounds; i++)
             {
                 //make moves                
                 PlayerMove firstPlayerMove = await _strategyService.GetNextMoveAsync(firstPlayer, rounds);
                 PlayerMove secondPlayerMove = await _strategyService.GetNextMoveAsync(secondPlayer, rounds);
                 //add moves to history
-                rounds.Add(GetRound(firstPlayerMove, secondPlayerMove));                
+                rounds.Add(GetRound(i, firstPlayerMove, secondPlayerMove));                
             }
             var game = new Game
             {
@@ -43,9 +43,10 @@ namespace PrisonersDilemma.Logic.Services
             return game;
         }
 
-        public Round GetRound(PlayerMove firstPlayerMove, PlayerMove secondPlayerMove)
+        public Round GetRound(int roundNumer, PlayerMove firstPlayerMove, PlayerMove secondPlayerMove)
         {
             var round = new Round();
+            round.Id = roundNumer;
             round.PlayersMoves = new List<PlayerMove>
             {
                 firstPlayerMove,
