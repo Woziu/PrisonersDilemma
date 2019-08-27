@@ -18,8 +18,4 @@
     <ProjectReference Include="..\PrisonersDilemma.Logic\PrisonersDilemma.Logic.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Players\" />
-  </ItemGroup>
-
 </Project>

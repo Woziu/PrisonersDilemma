@@ -13,7 +13,7 @@ namespace PrisonersDilemma.Logic.Services
         private readonly IGameService _gameService;        
 
         public PopulationService(IPopulationRepository populationRepository, IGameService gameService, 
-            List<Player> players)//TODO:IoC?
+            List<Player> players)
         {
             _populationRepository = populationRepository;
             _gameService = gameService;            

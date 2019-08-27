@@ -13,10 +13,9 @@ namespace PrisonersDilemma.Logic.Services
         private readonly ISimulationRepository _simulationRepository;
         private readonly IStrategyRepository _strategyRepository;
         private readonly int _simulationsLimit;
-
-        //TODO: PlayerManager/PlayerService 
+        
         public SimulationService(ISimulationRepository simulationRepository, IPopulationService populationService, 
-            IStrategyRepository strategyRepository, List<Player> players, int simulationsLimit)//TODO: IoC?
+            IStrategyRepository strategyRepository, List<Player> players, int simulationsLimit)
         {
             _populationService = populationService;
             _simulationRepository = simulationRepository;
@@ -26,13 +25,13 @@ namespace PrisonersDilemma.Logic.Services
         public Task Run()
         {
             //save players list to DB??
-            
-            //get players strategies
+
+            //TODO: get players strategies form DB
 
             //loop
             //evaluate
             //get new population
-            
+
             //save winner to DB?
             throw new NotImplementedException();
         }
