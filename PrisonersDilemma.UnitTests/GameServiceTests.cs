@@ -21,28 +21,38 @@ namespace PrisonersDilemma.UnitTests
 
         private readonly int TotalRounds = 10;
 
-        public GameService GetBasicMockedService()
+        public GameService GetBasicMockedCoopServices()
         {
             var gameMock = new Mock<IGameRepository>();
             var strategyMock = new Mock<IStrategyService>();
             var gameSettingsMock = new Mock<IGameSettingsProvider>();
 
-            //gameMock.Setup(x => x.GetAsync(It.IsAny<string>()))
-            //    .Returns(Task.FromResult(GetSampleGame()));
             strategyMock.Setup(x => x.GetNextMoveAsync(It.IsAny<Player>(), It.IsAny<List<Round>>()))
                 .Returns((Player p, List<Round> r) => (Task.FromResult(new PlayerMove() { PlayerId = p.Id, Type = MoveType.Cooperate })));
 
             gameSettingsMock.Setup(x => x.GetGameSettings()).Returns(GetTestSettings());
 
             return new GameService(gameMock.Object, strategyMock.Object, gameSettingsMock.Object);
+        }
 
+        public GameService GetBasicMockedCheatServices()
+        {
+            var gameMock = new Mock<IGameRepository>();
+            var strategyMock = new Mock<IStrategyService>();
+            var gameSettingsMock = new Mock<IGameSettingsProvider>();
 
+            strategyMock.Setup(x => x.GetNextMoveAsync(It.IsAny<Player>(), It.IsAny<List<Round>>()))
+                .Returns((Player p, List<Round> r) => (Task.FromResult(new PlayerMove() { PlayerId = p.Id, Type = MoveType.Cheat })));
+
+            gameSettingsMock.Setup(x => x.GetGameSettings()).Returns(GetTestSettings());
+
+            return new GameService(gameMock.Object, strategyMock.Object, gameSettingsMock.Object);
         }
 
         [TestMethod]
         public async Task Max_Score_When_Cooperate()
         {                    
-            GameService gameService = GetBasicMockedService();
+            GameService gameService = GetBasicMockedCoopServices();
 
             Game game = await gameService.PlayAsync(new Player(), new Player(), TotalRounds);
 
@@ -53,7 +63,7 @@ namespace PrisonersDilemma.UnitTests
         [TestMethod]
         public async Task Equal_Score_When_Cooperate()
         {
-            GameService gameService = GetBasicMockedService();
+            GameService gameService = GetBasicMockedCoopServices();
 
             Game game = await gameService.PlayAsync(new Player(), new Player(), TotalRounds);
 
@@ -61,6 +71,19 @@ namespace PrisonersDilemma.UnitTests
             int secondPlayerTotalScoure = game.Rounds.Sum(s => s.SecondPlayerScore);           
             Assert.AreEqual(firstPlayerTotalScore, secondPlayerTotalScoure);           
         }
+
+        [TestMethod]
+        public async Task Equal_Score_When_Cheat()
+        {
+            GameService gameService = GetBasicMockedCheatServices();
+
+            Game game = await gameService.PlayAsync(new Player(), new Player(), TotalRounds);
+
+            int firstPlayerTotalScore = game.Rounds.Sum(s => s.FirstPlayerScore);
+            int secondPlayerTotalScoure = game.Rounds.Sum(s => s.SecondPlayerScore);
+            Assert.AreEqual(firstPlayerTotalScore, secondPlayerTotalScoure);
+        }
+
 
         private Game GetSampleGame()
         {
