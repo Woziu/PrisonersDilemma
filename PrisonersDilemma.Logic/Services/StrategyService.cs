@@ -23,7 +23,7 @@ namespace PrisonersDilemma.Logic.Services
             MoveType selectedMove = MoveType.Undefined;
 
             var rounds = roundsHistory.OrderByDescending(r => r.Id).ToList();
-
+            //TODO: StrategyRepository : calculate total depth if none
             var moves = player.Strategy.Moves
                 .Where(c => c.TotalDepth <= roundsHistory.Count)
                 .OrderByDescending(d => d.TotalDepth);//moves with highest depth have highest prioryty
@@ -50,7 +50,7 @@ namespace PrisonersDilemma.Logic.Services
             if (move.Conditions == null) return true;
 
             bool ok = true;
-            
+
             foreach (Condition condition in move.Conditions)
             {
                 if (condition.Depth > roundsHistory.Count)
@@ -62,6 +62,7 @@ namespace PrisonersDilemma.Logic.Services
                             .Where(p => p.PlayerId == thisPlayerId).FirstOrDefault().Type;
                         if (condition.PlayerMove != playerMove)
                         {
+                            if (move.ConditionsOperator == ConditionOperator.AND) return false;                            
                             ok = false;
                         }
                     }
@@ -72,6 +73,7 @@ namespace PrisonersDilemma.Logic.Services
                             .Where(p => p.PlayerId != thisPlayerId).FirstOrDefault().Type;
                         if (condition.EnemyMove != enemyMove)
                         {
+                            if (move.ConditionsOperator == ConditionOperator.AND) return false;
                             ok = false;
                         }
                     }

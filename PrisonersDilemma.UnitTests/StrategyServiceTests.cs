@@ -58,5 +58,29 @@ namespace PrisonersDilemma.UnitTests
             PlayerMove move = await strategyService.GetNextMoveAsync(player, GetCoopHistory(Guid.NewGuid().ToString()));
             Assert.AreEqual(MoveType.Cheat, move.Type);
         }
+
+        [TestMethod]
+        public async Task Copycat_Should_Cheat()
+        {
+            var repositoryMock = new Mock<IStrategyRepository>();
+            StrategyService strategyService = new StrategyService(repositoryMock.Object);
+            Player player = BasicPlayers.GetCopycatPlayer();
+
+            PlayerMove move = await strategyService.GetNextMoveAsync(player, GetCoopHistory(player.Id));
+            Assert.AreEqual(MoveType.Cheat, move.Type);
+        }
+
+        [TestMethod]
+        public async Task Copycat_Should_Cooperate()
+        {
+            var repositoryMock = new Mock<IStrategyRepository>();
+            StrategyService strategyService = new StrategyService(repositoryMock.Object);
+            Player player = BasicPlayers.GetCheaterPlayer();
+
+            PlayerMove move = await strategyService.GetNextMoveAsync(player, GetCoopHistory(Guid.NewGuid().ToString()));
+            Assert.AreEqual(MoveType.Cheat, move.Type);
+        }
+
+        //TODO: ConditionOperator tests
     }
 }
