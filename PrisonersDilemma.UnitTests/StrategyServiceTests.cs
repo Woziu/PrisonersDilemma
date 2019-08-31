@@ -97,11 +97,11 @@ namespace PrisonersDilemma.UnitTests
             var repositoryMock = new Mock<IStrategyRepository>();
             StrategyService strategyService = new StrategyService(repositoryMock.Object);
             Player player = ConditionalPlayers.GetCheaterVsCooperator();
-           
+            string enemyId = Guid.NewGuid().ToString();
             List<PlayerMove> moves = new List<PlayerMove>()
             {
                 new PlayerMove(){ PlayerId = player.Id, Type = MoveType.Cooperate },
-                new PlayerMove(){ PlayerId = Guid.NewGuid().ToString(), Type = MoveType.Cheat }
+                new PlayerMove(){ PlayerId = enemyId, Type = MoveType.Cheat }
             };
             var rounds = new List<Round>()
             {
@@ -112,6 +112,30 @@ namespace PrisonersDilemma.UnitTests
             PlayerMove move = await strategyService.GetNextMoveAsync(player, rounds);
 
             Assert.AreEqual(MoveType.Cooperate, move.Type);
+        }
+
+        [TestMethod]
+        public async Task Should_Cheat_Vs_Cheater()
+        {
+            var repositoryMock = new Mock<IStrategyRepository>();
+            StrategyService strategyService = new StrategyService(repositoryMock.Object);
+            Player player = ConditionalPlayers.GetCheaterVsCheater();
+            string enemyId = Guid.NewGuid().ToString();
+            List<PlayerMove> moves = new List<PlayerMove>()
+            {
+                new PlayerMove(){ PlayerId = player.Id, Type = MoveType.Cooperate },
+                new PlayerMove(){ PlayerId = enemyId, Type = MoveType.Cheat }
+            };
+            var rounds = new List<Round>()
+            {
+                new Round() { PlayersMoves = moves },
+                new Round() { PlayersMoves = moves },
+                new Round() { PlayersMoves = moves },
+            };
+
+            PlayerMove move = await strategyService.GetNextMoveAsync(player, rounds);
+
+            Assert.AreEqual(MoveType.Cheat, move.Type);
         }
         //TODO: OR ConditionOperator tests
     }

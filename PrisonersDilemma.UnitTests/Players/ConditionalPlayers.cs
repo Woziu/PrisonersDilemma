@@ -66,5 +66,70 @@ namespace PrisonersDilemma.UnitTests.Players
 
             return player;
         }
+
+        public static Player GetCheaterVsCheater()
+        {
+            var strategy = new Strategy()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "Cheat if enemy cheated",
+                Moves = new List<Move>()
+                {
+                    new Move()
+                    {
+                        TotalDepth = 0,
+                        MoveType = MoveType.Cooperate
+                    },
+                    new Move()
+                    {
+                        TotalDepth = 1,
+                        MoveType = MoveType.Cooperate
+                    },
+                    new Move()
+                    {
+                        TotalDepth = 2,
+                        Priority = 1,
+                        Conditions = new List<Condition>()
+                        {
+                            new Condition()
+                            {
+                                Depth = 1,
+                                EnemyMove = MoveType.Cheat
+                            },
+                            new Condition()
+                            {
+                                Depth = 2,
+                                EnemyMove = MoveType.Cheat
+                            }
+                        },
+                        ConditionsOperator = ConditionOperator.OR,
+                        MoveType = MoveType.Cheat
+                    },
+                    new Move()
+                    {
+                        TotalDepth = 1,
+                        Priority = 1,
+                        Conditions = new List<Condition>()
+                        {
+                            new Condition()
+                            {
+                                Depth = 1,
+                                EnemyMove = MoveType.Cooperate
+                            }
+                        },
+                        MoveType = MoveType.Cooperate
+                    },
+                }
+            };
+            var player = new Player()
+            {
+                Strategy = strategy,
+                StrategyId = strategy.Id,
+                Score = 0,
+                Id = Guid.NewGuid().ToString()
+            };
+
+            return player;
+        }
     }
 }
