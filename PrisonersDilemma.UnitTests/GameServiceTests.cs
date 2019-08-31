@@ -18,10 +18,44 @@ namespace PrisonersDilemma.UnitTests
     {
         private readonly int MoveModifier = -1;
         private readonly int CooperateModifier = 3;
-
         private readonly int TotalRounds = 10;
 
-        public GameService GetBasicMockedCoopServices()
+        [TestMethod]
+        public async Task Max_Score_When_Cooperate()
+        {                    
+            GameService gameService = GetBasicMockedCoopStrategyServices();
+
+            Game game = await gameService.PlayAsync(new Player(), new Player());
+
+            int firstPlayerTotalScore = game.Rounds.Sum(s => s.FirstPlayerScore);
+            Assert.AreEqual((TotalRounds * MoveModifier + TotalRounds * CooperateModifier), firstPlayerTotalScore);
+        }
+
+        [TestMethod]
+        public async Task Equal_Score_When_Cooperate()
+        {
+            GameService gameService = GetBasicMockedCoopStrategyServices();
+
+            Game game = await gameService.PlayAsync(new Player(), new Player());
+
+            int firstPlayerTotalScore = game.Rounds.Sum(s => s.FirstPlayerScore);
+            int secondPlayerTotalScoure = game.Rounds.Sum(s => s.SecondPlayerScore);           
+            Assert.AreEqual(firstPlayerTotalScore, secondPlayerTotalScoure);           
+        }
+
+        [TestMethod]
+        public async Task Equal_Score_When_Cheat()
+        {
+            GameService gameService = GetBasicMockedCheatStrategyServices();
+
+            Game game = await gameService.PlayAsync(new Player(), new Player());
+
+            int firstPlayerTotalScore = game.Rounds.Sum(s => s.FirstPlayerScore);
+            int secondPlayerTotalScoure = game.Rounds.Sum(s => s.SecondPlayerScore);
+            Assert.AreEqual(firstPlayerTotalScore, secondPlayerTotalScoure);
+        }
+
+        public GameService GetBasicMockedCoopStrategyServices()
         {
             var gameMock = new Mock<IGameRepository>();
             var strategyMock = new Mock<IStrategyService>();
@@ -35,7 +69,7 @@ namespace PrisonersDilemma.UnitTests
             return new GameService(gameMock.Object, strategyMock.Object, gameSettingsMock.Object);
         }
 
-        public GameService GetBasicMockedCheatServices()
+        public GameService GetBasicMockedCheatStrategyServices()
         {
             var gameMock = new Mock<IGameRepository>();
             var strategyMock = new Mock<IStrategyService>();
@@ -48,42 +82,6 @@ namespace PrisonersDilemma.UnitTests
 
             return new GameService(gameMock.Object, strategyMock.Object, gameSettingsMock.Object);
         }
-
-        [TestMethod]
-        public async Task Max_Score_When_Cooperate()
-        {                    
-            GameService gameService = GetBasicMockedCoopServices();
-
-            Game game = await gameService.PlayAsync(new Player(), new Player(), TotalRounds);
-
-            int firstPlayerTotalScore = game.Rounds.Sum(s => s.FirstPlayerScore);
-            Assert.AreEqual((TotalRounds * MoveModifier + TotalRounds * CooperateModifier), firstPlayerTotalScore);
-        }
-
-        [TestMethod]
-        public async Task Equal_Score_When_Cooperate()
-        {
-            GameService gameService = GetBasicMockedCoopServices();
-
-            Game game = await gameService.PlayAsync(new Player(), new Player(), TotalRounds);
-
-            int firstPlayerTotalScore = game.Rounds.Sum(s => s.FirstPlayerScore);
-            int secondPlayerTotalScoure = game.Rounds.Sum(s => s.SecondPlayerScore);           
-            Assert.AreEqual(firstPlayerTotalScore, secondPlayerTotalScoure);           
-        }
-
-        [TestMethod]
-        public async Task Equal_Score_When_Cheat()
-        {
-            GameService gameService = GetBasicMockedCheatServices();
-
-            Game game = await gameService.PlayAsync(new Player(), new Player(), TotalRounds);
-
-            int firstPlayerTotalScore = game.Rounds.Sum(s => s.FirstPlayerScore);
-            int secondPlayerTotalScoure = game.Rounds.Sum(s => s.SecondPlayerScore);
-            Assert.AreEqual(firstPlayerTotalScore, secondPlayerTotalScoure);
-        }
-
 
         private Game GetSampleGame()
         {
@@ -101,7 +99,6 @@ namespace PrisonersDilemma.UnitTests
                 StrategyId = Guid.NewGuid().ToString()
             };
 
-
             return new Game()
             {
                 //Id = Guid.NewGuid().ToString(),
@@ -116,7 +113,8 @@ namespace PrisonersDilemma.UnitTests
             return new GameSettings()
             {
                 MoveModifier = this.MoveModifier,
-                CooperateModifier = this.CooperateModifier
+                CooperateModifier = this.CooperateModifier,
+                TotalRounds = this.TotalRounds
             };
         }
     }
