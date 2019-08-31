@@ -79,7 +79,7 @@ namespace PrisonersDilemma.Logic.Services
             return Task.FromResult(new Population() { Players = newPlayersList });
         }
 
-        public Task<bool> IsConsistent(Population population)
+        public Task<bool> IsPopulationConsistent(Population population)
         {
             string firstStrategy = population.Players[0].StrategyId;
             foreach (Player player in population.Players)

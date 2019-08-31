@@ -67,7 +67,7 @@ namespace PrisonersDilemma.UnitTests
                 players.Add(new Player() { StrategyId = "1" });
             }
             
-            bool isConsistent = await populationService.IsConsistent(new Population() { Players = players });        
+            bool isConsistent = await populationService.IsPopulationConsistent(new Population() { Players = players });        
             Assert.IsTrue(isConsistent); 
         }
 
@@ -86,7 +86,7 @@ namespace PrisonersDilemma.UnitTests
             }
             players.Add(new Player() { StrategyId = "2" });            
 
-            bool isConsistent = await populationService.IsConsistent(new Population() { Players = players });
+            bool isConsistent = await populationService.IsPopulationConsistent(new Population() { Players = players });
             Assert.IsFalse(isConsistent);
         }
 
@@ -105,7 +105,7 @@ namespace PrisonersDilemma.UnitTests
             }
             players.Add(new Player() { StrategyId = "2", Score = 20 });
             Population population = await populationService.GetNewPopulation(new Population() { Players = players });
-            bool isConsistent = await populationService.IsConsistent(population);
+            bool isConsistent = await populationService.IsPopulationConsistent(population);
             Assert.IsTrue(isConsistent);
         }
 
@@ -126,7 +126,7 @@ namespace PrisonersDilemma.UnitTests
             
             Population population = await populationService.GetNewPopulation(new Population() { Players = players });
 
-            bool isConsistent = await populationService.IsConsistent(population);
+            bool isConsistent = await populationService.IsPopulationConsistent(population);
             Assert.IsTrue(isConsistent);
             Assert.AreEqual(players.Count, population.Players.Count);            
         }      

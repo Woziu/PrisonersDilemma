@@ -10,6 +10,6 @@ namespace PrisonersDilemma.Logic.Services
     {
         Task<Population> Evaluate(List<Player> players);
         Task<Population> GetNewPopulation(Population population);
-        Task<bool> IsConsistent(Population population);
+        Task<bool> IsPopulationConsistent(Population population);
     }
 }

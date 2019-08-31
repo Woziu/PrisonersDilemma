@@ -136,7 +136,6 @@ namespace PrisonersDilemma.UnitTests
             PlayerMove move = await strategyService.GetNextMoveAsync(player, rounds);
 
             Assert.AreEqual(MoveType.Cheat, move.Type);
-        }
-        //TODO: OR ConditionOperator tests
+        }        
     }
 }
