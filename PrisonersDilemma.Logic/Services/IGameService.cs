@@ -9,6 +9,6 @@ namespace PrisonersDilemma.Logic.Services
     public interface IGameService
     {
         Task SaveGameAsync(string populationId);
-        Task<Game> PlayAsync(Player firstPlayer, Player secondPlayer, int totalRounds);
+        Task<Game> PlayAsync(Player firstPlayer, Player secondPlayer);
     }
 }

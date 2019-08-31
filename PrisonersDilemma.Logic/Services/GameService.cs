@@ -21,10 +21,10 @@ namespace PrisonersDilemma.Logic.Services
             _strategyService = strategyService;
             _gameSettings = gameSettingsProvider.GetGameSettings();
         }
-        public async Task<Game> PlayAsync(Player firstPlayer, Player secondPlayer, int totalRounds)
+        public async Task<Game> PlayAsync(Player firstPlayer, Player secondPlayer)
         {            
             var rounds = new List<Round>();
-            for (int i = 1; i <= totalRounds; i++)
+            for (int i = 1; i <= _gameSettings.TotalRounds; i++)
             {
                 //make moves                
                 PlayerMove firstPlayerMove = await _strategyService.GetNextMoveAsync(firstPlayer, rounds);
