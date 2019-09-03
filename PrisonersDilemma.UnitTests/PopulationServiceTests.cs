@@ -23,6 +23,7 @@ namespace PrisonersDilemma.UnitTests
         {
             var repositoryMock = new Mock<IPopulationRepository>();
             var gameServiceMock = new Mock<IGameService>();
+            var gameRepositoryMock = new Mock<IGameRepository>();
 
             var rounds = new List<Round>();
             for (int i = 0; i < 10; i++)
@@ -33,7 +34,8 @@ namespace PrisonersDilemma.UnitTests
             gameServiceMock.Setup(g => g.PlayAsync(It.IsAny<Player>(), It.IsAny<Player>()))
                 .Returns(Task.FromResult(new Game() { Rounds = rounds }));
 
-            var populationService = new PopulationService(repositoryMock.Object, gameServiceMock.Object);
+            var populationService = new PopulationService(repositoryMock.Object,
+                gameServiceMock.Object, gameRepositoryMock.Object);
 
             Player firstPlayer = new Player()
             {
@@ -58,8 +60,10 @@ namespace PrisonersDilemma.UnitTests
         {
             var repositoryMock = new Mock<IPopulationRepository>();
             var gameServiceMock = new Mock<IGameService>();
+            var gameRepositoryMock = new Mock<IGameRepository>();
 
-            var populationService = new PopulationService(repositoryMock.Object, gameServiceMock.Object);
+            var populationService = new PopulationService(repositoryMock.Object, 
+                gameServiceMock.Object, gameRepositoryMock.Object);
 
             var players = new List<Player>();
             for (int i = 0; i < 10; i++)
@@ -76,8 +80,10 @@ namespace PrisonersDilemma.UnitTests
         {
             var repositoryMock = new Mock<IPopulationRepository>();
             var gameServiceMock = new Mock<IGameService>();
+            var gameRepositoryMock = new Mock<IGameRepository>();
 
-            var populationService = new PopulationService(repositoryMock.Object, gameServiceMock.Object);
+            var populationService = new PopulationService(repositoryMock.Object, 
+                gameServiceMock.Object, gameRepositoryMock.Object);
 
             var players = new List<Player>();
             for (int i = 0; i < 10; i++)
@@ -95,8 +101,10 @@ namespace PrisonersDilemma.UnitTests
         {
             var repositoryMock = new Mock<IPopulationRepository>();
             var gameServiceMock = new Mock<IGameService>();
+            var gameRepositoryMock = new Mock<IGameRepository>();
 
-            var populationService = new PopulationService(repositoryMock.Object, gameServiceMock.Object);
+            var populationService = new PopulationService(repositoryMock.Object, 
+                gameServiceMock.Object, gameRepositoryMock.Object);
 
             var players = new List<Player>();
             for (int i = 0; i < 9; i++)
@@ -114,8 +122,10 @@ namespace PrisonersDilemma.UnitTests
         {
             var repositoryMock = new Mock<IPopulationRepository>();
             var gameServiceMock = new Mock<IGameService>();
+            var gameRepositoryMock = new Mock<IGameRepository>();
 
-            var populationService = new PopulationService(repositoryMock.Object, gameServiceMock.Object);
+            var populationService = new PopulationService(repositoryMock.Object,
+                gameServiceMock.Object, gameRepositoryMock.Object);
 
             var players = new List<Player>();
             for (int i = 0; i < 9; i++)
