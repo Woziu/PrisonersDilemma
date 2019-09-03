@@ -15,7 +15,7 @@ namespace PrisonersDilemma.Core.Repositories
         {
             _connectionString = connectionStringProvider.GetConnectionString();
         }
-        public Task<Game> GetAsync(string id)
+        public Task SaveGameAsync(string populationId, Game game)
         {
             throw new NotImplementedException();
         }

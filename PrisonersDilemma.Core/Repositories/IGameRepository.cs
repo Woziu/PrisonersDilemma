@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace PrisonersDilemma.Core.Repositories
 {
     public interface IGameRepository
-    {
-        Task<Game> GetAsync(string id);
+    {        
+        Task SaveGameAsync(string populationId, Game game);
     }
 }

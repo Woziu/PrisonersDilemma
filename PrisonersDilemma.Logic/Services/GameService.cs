@@ -42,7 +42,6 @@ namespace PrisonersDilemma.Logic.Services
 
             return game;
         }
-
         public Round GetRound(int roundNumer, PlayerMove firstPlayerMove, PlayerMove secondPlayerMove)
         {
             var round = new Round();
@@ -65,11 +64,6 @@ namespace PrisonersDilemma.Logic.Services
                 round.FirstPlayerScore += _gameSettings.CooperateModifier;
             }
             return round;
-        }
-
-        public Task SaveGameAsync(string populationId)
-        {
-            throw new NotImplementedException();
-        }
+        }               
     }
 }
