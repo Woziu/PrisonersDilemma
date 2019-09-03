@@ -23,8 +23,7 @@ namespace PrisonersDilemma.Logic.Services
             MoveType selectedMove = MoveType.Undefined;
 
             var rounds = roundsHistory.OrderByDescending(r => r.Id).ToList();
-            //TODO: StrategyRepository : calculate total depth if none
-            //TODO: StrategyRepository : if priority == 0 > priority = depth
+            
             var moves = player.Strategy.Moves
                 .Where(c => c.TotalDepth <= roundsHistory.Count)
                 .OrderByDescending(d => d.TotalDepth);//moves with highest depth have highest prioryty
