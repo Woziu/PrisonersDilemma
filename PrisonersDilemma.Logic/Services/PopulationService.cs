@@ -11,12 +11,15 @@ namespace PrisonersDilemma.Logic.Services
     public class PopulationService : IPopulationService
     {
         private readonly IPopulationRepository _populationRepository;
-        private readonly IGameService _gameService;        
+        private readonly IGameService _gameService;
+        private readonly IGameRepository _gameRepository;
 
-        public PopulationService(IPopulationRepository populationRepository, IGameService gameService)
+        public PopulationService(IPopulationRepository populationRepository, IGameService gameService,
+            IGameRepository gameRepository)
         {
             _populationRepository = populationRepository;
-            _gameService = gameService;            
+            _gameService = gameService;
+            _gameRepository = gameRepository;
         }
         
         public async Task<Population> Evaluate(List<Player> players)
@@ -26,6 +29,7 @@ namespace PrisonersDilemma.Logic.Services
                 Id = Guid.NewGuid().ToString(),
                 Games = new List<Game>()
             };
+            //TODO: check if async would be faster
             //play
             for (int i = 0; i < players.Count; i++)
             {
@@ -42,10 +46,9 @@ namespace PrisonersDilemma.Logic.Services
                     //add game to population
                     population.Games.Add(game);
                 }
-            }
+            }           
             //add new players to population
-            population.Players = players;
-            //TODO: save population
+            population.Players = players;            
             return population;
         }
 
@@ -92,6 +95,22 @@ namespace PrisonersDilemma.Logic.Services
             return Task.FromResult(true);
         }
 
+        public async Task SavePopulationAsync(string simulationId, Population population)
+        {
+            await _populationRepository.SavePopulationAsync(simulationId, population);
+            //save games async
+            List<Task> saveGameTask = new List<Task>();
+            foreach (Game game in population.Games)
+            {
+                saveGameTask.Add(_gameRepository.SaveGameAsync(population.Id, game));
+            }
+            //wait for all operations to finish
+            while(saveGameTask.Any())
+            {
+                Task finished = await Task.WhenAny(saveGameTask);
+                saveGameTask.Remove(finished);
+            }
+        }
         private Dictionary<string, int> GetScorePerStrategy(Population population)
         {           
             Dictionary<string, int> scorePerStrategy = new Dictionary<string, int>();
