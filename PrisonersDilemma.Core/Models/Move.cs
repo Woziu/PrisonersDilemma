@@ -7,7 +7,8 @@ namespace PrisonersDilemma.Core.Models
 {
     public class Move
     {
-        public int Depth { get; set; }
+        public int TotalDepth;
+        public int Priority { get; set; }
         public List<Condition> Conditions { get; set; }
         public ConditionOperator ConditionsOperator { get; set; }
         public MoveType MoveType { get; set; }        

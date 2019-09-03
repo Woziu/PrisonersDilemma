@@ -4,5 +4,5 @@ using System.Text;
 
 namespace PrisonersDilemma.Core.Enums
 {
-    public enum ConditionOperator { STOP, AND, OR }
+    public enum ConditionOperator { NONE, AND, OR }
 }

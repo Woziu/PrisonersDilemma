@@ -4,5 +4,5 @@ using System.Text;
 
 namespace PrisonersDilemma.Core.Enums
 {
-    public enum MoveType { Cooperate, Cheat, Undefined }
+    public enum MoveType { Undefined, Cooperate, Cheat }
 }

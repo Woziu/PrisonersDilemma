@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace PrisonersDilemma.Logic.Services
 {
     public interface IStrategyService
-    {
-        Task<MoveType> GetNextMove(Game game);
+    {        
+        Task<PlayerMove> GetNextMoveAsync(Player player, List<Round> roundsHistory);
     }
 }

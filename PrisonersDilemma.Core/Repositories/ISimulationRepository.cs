@@ -8,8 +8,7 @@ namespace PrisonersDilemma.Core.Repositories
 {
     public interface ISimulationRepository
     {
-        Task<Simulation> GetAsync(string id);
-        Task AddAsync(Simulation simulation);
-        Task UpdateAsync(Simulation simulation);
+        void SaveSimulation(Simulation simulation);
+        Task SaveSimulationAsync(Simulation simulation);
     }
 }
