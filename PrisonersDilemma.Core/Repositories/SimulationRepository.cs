@@ -16,17 +16,12 @@ namespace PrisonersDilemma.Core.Repositories
             _connectionString = connectionStringProvider.GetConnectionString();
         }
 
-        public Task AddAsync(Simulation simulation)
+        public void SaveSimulation(Simulation simulation)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Simulation> GetAsync(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateAsync(Simulation simulation)
+        public Task SaveSimulationAsync(Simulation simulation)
         {
             throw new NotImplementedException();
         }
