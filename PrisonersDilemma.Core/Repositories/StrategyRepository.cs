@@ -1,4 +1,5 @@
-﻿using PrisonersDilemma.Core.Helpers;
+﻿using MongoDB.Driver;
+using PrisonersDilemma.Core.Helpers;
 using PrisonersDilemma.Core.Models;
 using System;
 using System.Collections.Generic;
@@ -9,24 +10,19 @@ namespace PrisonersDilemma.Core.Repositories
 {
     public class StrategyRepository : IStrategyRepository
     {
-        private readonly string _connectionString;
+        private readonly IMongoCollection<Strategy> _strategies;
 
         public StrategyRepository(IConnectionStringProvider connectionStringProvider)
         {
-            _connectionString = connectionStringProvider.GetConnectionString();
-        }
-
-        //TODO: StrategyRepository : calculate total depth if none
-        //TODO: StrategyRepository : if priority == 0 > priority = depth
-
-        public Strategy GetStrategyById(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Strategy> GetStrategyByIdAsync(string id)
-        {
-            throw new NotImplementedException();
-        }
+            var client = new MongoClient(connectionStringProvider.GetConnectionString());
+            var database = client.GetDatabase(connectionStringProvider.GetDatabase());
+            _strategies = database.GetCollection<Strategy>(connectionStringProvider.GetStrategyCollectionName());
+        }      
+        public Strategy GetStrategyById(string id) =>
+            _strategies.Find<Strategy>(s => s.Id == id).FirstOrDefault();
+        public List<Strategy> GetStrategiesById(List<string> idList) =>
+            _strategies.Find<Strategy>(s => idList.Contains(s.Id)).ToList();         
+        public async Task<Strategy> GetStrategyByIdAsync(string id) =>
+            await _strategies.FindSync<Strategy>(s => s.Id == id).FirstOrDefaultAsync();
     }
 }

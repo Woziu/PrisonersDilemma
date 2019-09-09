@@ -10,9 +10,9 @@ namespace PrisonersDilemma.Logic.Services
 {
     public class PopulationService : IPopulationService
     {
-        private readonly IPopulationRepository _populationRepository;
+        private readonly IPopulationRepository _populationRepository;//TODO:DELETE
         private readonly IGameService _gameService;
-        private readonly IGameRepository _gameRepository;
+        private readonly IGameRepository _gameRepository;//TODO:DELETE
 
         public PopulationService(IPopulationRepository populationRepository, IGameService gameService,
             IGameRepository gameRepository)
@@ -84,6 +84,10 @@ namespace PrisonersDilemma.Logic.Services
 
         public Task<bool> IsPopulationConsistent(Population population)
         {
+            if (population == null)
+            {
+                throw new ArgumentNullException("There is no population");
+            }
             string firstStrategy = population.Players[0].StrategyId;
             foreach (Player player in population.Players)
             {
@@ -95,22 +99,23 @@ namespace PrisonersDilemma.Logic.Services
             return Task.FromResult(true);
         }
 
-        public async Task SavePopulationAsync(string simulationId, Population population)
-        {
-            await _populationRepository.SavePopulationAsync(simulationId, population);
-            //save games async
-            List<Task> saveGameTask = new List<Task>();
-            foreach (Game game in population.Games)
-            {
-                saveGameTask.Add(_gameRepository.SaveGameAsync(population.Id, game));
-            }
-            //wait for all operations to finish
-            while(saveGameTask.Any())
-            {
-                Task finished = await Task.WhenAny(saveGameTask);
-                saveGameTask.Remove(finished);
-            }
-        }
+        //public async Task SavePopulationAsync(string simulationId, Population population)
+        //{
+        //    //TODO: DELETE
+        //    //await _populationRepository.SavePopulationAsync(simulationId, population);
+        //    ////save games async
+        //    //List<Task> saveGameTask = new List<Task>();
+        //    //foreach (Game game in population.Games)
+        //    //{
+        //    //    saveGameTask.Add(_gameRepository.SaveAsync(population.Id, game));
+        //    //}
+        //    ////wait for all operations to finish
+        //    //while(saveGameTask.Any())
+        //    //{
+        //    //    Task finished = await Task.WhenAny(saveGameTask);
+        //    //    saveGameTask.Remove(finished);
+        //    //}
+        //}
         private Dictionary<string, int> GetScorePerStrategy(Population population)
         {           
             Dictionary<string, int> scorePerStrategy = new Dictionary<string, int>();

@@ -10,5 +10,6 @@ namespace PrisonersDilemma.Logic.Services
     public interface IStrategyService
     {        
         Task<PlayerMove> GetNextMoveAsync(Player player, List<Round> roundsHistory);
+        List<Strategy> GetStrategiesById(List<string> idList);
     }
 }

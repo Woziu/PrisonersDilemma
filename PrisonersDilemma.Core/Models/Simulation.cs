@@ -13,5 +13,6 @@ namespace PrisonersDilemma.Core.Models
         public int SimulationsCompleated { get; set; }
         public List<Player> EntryPlayers { get; set; }
         public Player Winner { get; set; }
+        public List<Population> Populations { get; set; }
     }
 }

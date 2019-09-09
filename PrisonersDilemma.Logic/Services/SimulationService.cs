@@ -14,15 +14,15 @@ namespace PrisonersDilemma.Logic.Services
     {
         private readonly IPopulationService _populationService;
         private readonly ISimulationRepository _simulationRepository;
-        private readonly IStrategyRepository _strategyRepository;
+        private readonly IStrategyService _strategyService;
         private readonly SimulationSettings _simulationSettings;
                
         public SimulationService(ISimulationRepository simulationRepository, IPopulationService populationService, 
-            IStrategyRepository strategyRepository, ISimulationSettingsProvider simulationSettingsProdiver)
+            IStrategyService strategyRepository, ISimulationSettingsProvider simulationSettingsProdiver)
         {
             _populationService = populationService;
             _simulationRepository = simulationRepository;
-            _strategyRepository = strategyRepository;
+            _strategyService = strategyRepository;
             _simulationSettings = simulationSettingsProdiver.GetSimulationSettings();
         }
         public async Task<Simulation> Run(List<Player> players)
@@ -31,28 +31,31 @@ namespace PrisonersDilemma.Logic.Services
             {
                 throw new ArgumentNullException("No players supplied");
             }
-            int currentSimulation = 0;            
+            int currentPopulation = 0;            
             bool isPopulationConsistent = false;
 
             Simulation simulation = new Simulation()
             {
-                Id = Guid.NewGuid().ToString(),
                 StartDate = DateTime.Now,
-                SimulationsLimit = _simulationSettings.SimulationsLimit,
-                EntryPlayers = players
+                SimulationsLimit = _simulationSettings.PoplationsLimit,
+                EntryPlayers = players,
+                Populations = new List<Population>()
             };
+            await _simulationRepository.SaveAsync(simulation);
 
             players = GetPlayersStrategies(players);
 
             do
             {
-                currentSimulation++;
+                currentPopulation++;
                 //evaluate players in current population
                 Population population = await _populationService.Evaluate(players);
-                //save to db
-                await _populationService.SavePopulationAsync(simulation.Id, population);
                 //check if consistent
-                isPopulationConsistent = await _populationService.IsPopulationConsistent(population);                
+                isPopulationConsistent = await _populationService.IsPopulationConsistent(population);
+
+                population.IsConsistent = isPopulationConsistent;
+                simulation.Populations.Add(population);
+
                 if (isPopulationConsistent)
                 {
                     break;
@@ -64,13 +67,13 @@ namespace PrisonersDilemma.Logic.Services
                     players = newPopulation.Players;
                 }                
             }
-            while (currentSimulation < _simulationSettings.SimulationsLimit);
+            while (currentPopulation < _simulationSettings.PoplationsLimit);
 
             simulation.FinishDate = DateTime.Now;
-            simulation.SimulationsCompleated = currentSimulation;
+            simulation.SimulationsCompleated = currentPopulation;
             simulation.Winner = isPopulationConsistent ? players.FirstOrDefault() : null;
 
-            await _simulationRepository.SaveSimulationAsync(simulation);
+            await _simulationRepository.UpdateAsync(simulation);
 
             return simulation;
         }
@@ -84,13 +87,11 @@ namespace PrisonersDilemma.Logic.Services
                 .Select(s => s.StrategyId)
                 .Distinct().ToList();
 
-            var strategies = new Dictionary<string, Strategy>();
-            //TODO: probalby should be simplified
-            //TODO: test vs async get all
-            foreach(string strategyId in distinctStrategies)
-            {
-                strategies[strategyId] = _strategyRepository.GetStrategyById(strategyId);                 
-            }
+            Dictionary<string, Strategy> strategies = _strategyService
+                .GetStrategiesById(distinctStrategies)
+                .Distinct()
+                .ToDictionary(k => k.Id, k => k);
+                        
             for (int i = 0; i < players.Count; i++)
             {
                 if (players[i].Strategy == null)

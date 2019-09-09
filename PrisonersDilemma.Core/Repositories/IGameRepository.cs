@@ -8,6 +8,7 @@ namespace PrisonersDilemma.Core.Repositories
 {
     public interface IGameRepository
     {        
-        Task SaveGameAsync(string populationId, Game game);
+        Task SaveAsync(string populationId, Game game);
+        Task SaveAsync(string populationId, List<Game> games);
     }
 }
