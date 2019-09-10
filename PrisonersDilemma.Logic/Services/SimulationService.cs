@@ -80,6 +80,7 @@ namespace PrisonersDilemma.Logic.Services
 
         public List<Player> GetPlayersStrategies(List<Player> players)
         {
+            //TODO: probably should be tested
             //limit db connections by getting each strategy only oncefa
             List<string> distinctStrategies = players
                 .Where(p => p.Strategy == null)

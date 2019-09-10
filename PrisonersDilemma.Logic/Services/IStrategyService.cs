@@ -11,5 +11,7 @@ namespace PrisonersDilemma.Logic.Services
     {        
         Task<PlayerMove> GetNextMoveAsync(Player player, List<Round> roundsHistory);
         List<Strategy> GetStrategiesById(List<string> idList);
+        Task<List<Strategy>> GetAllStrategies();
+        Task<Strategy> GetStrategyByName(string name);
     }
 }
