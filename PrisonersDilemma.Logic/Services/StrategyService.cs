@@ -83,7 +83,7 @@ namespace PrisonersDilemma.Logic.Services
 
         public List<Strategy> GetStrategiesById(List<string> idList)
         {
-            List<Strategy> strategies = _strategyRepository.GetStrategiesById(idList);
+            List<Strategy> strategies = _strategyRepository.Get(idList);
             //check if strategie are complete
             if (strategies != null && strategies.Any())
             {

@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PrisonersDilemma.UnitTests
+namespace PrisonersDilemma.UnitTests//TODO:Rename project to PrisonersDilemma.Tests.Unit? when bored
 {
     [TestClass]
     public class GameServiceTests

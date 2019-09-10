@@ -8,8 +8,10 @@ namespace PrisonersDilemma.Core.Repositories
 {
     public interface IStrategyRepository
     {
-        Strategy GetStrategyById(string id);
-        List<Strategy> GetStrategiesById(List<string> idList);
-        Task<Strategy> GetStrategyByIdAsync(string id);
+        Strategy Get(string id);
+        List<Strategy> Get(List<string> idList);
+        Task<Strategy> GetAsync(string id);
+        string Add(Strategy strategy);
+        Task<string> AddAsync(Strategy strategy);
     }
 }

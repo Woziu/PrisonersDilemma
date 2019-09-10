@@ -17,12 +17,22 @@ namespace PrisonersDilemma.Core.Repositories
             var client = new MongoClient(connectionStringProvider.GetConnectionString());
             var database = client.GetDatabase(connectionStringProvider.GetDatabase());
             _strategies = database.GetCollection<Strategy>(connectionStringProvider.GetStrategyCollectionName());
-        }      
-        public Strategy GetStrategyById(string id) =>
+        }
+
+        public string Add(Strategy strategy)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task<string> AddAsync(Strategy strategy)
+        {
+            await _strategies.InsertOneAsync(strategy);
+            return strategy.Id;
+        }            
+        public Strategy Get(string id) =>
             _strategies.Find<Strategy>(s => s.Id == id).FirstOrDefault();
-        public List<Strategy> GetStrategiesById(List<string> idList) =>
+        public List<Strategy> Get(List<string> idList) =>
             _strategies.Find<Strategy>(s => idList.Contains(s.Id)).ToList();         
-        public async Task<Strategy> GetStrategyByIdAsync(string id) =>
+        public async Task<Strategy> GetAsync(string id) =>
             await _strategies.FindSync<Strategy>(s => s.Id == id).FirstOrDefaultAsync();
     }
 }
