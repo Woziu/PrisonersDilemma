@@ -9,7 +9,8 @@ namespace PrisonersDilemma.Core.Helpers
     {
         public SimulationSettings GetSimulationSettings()
         {
-            throw new NotImplementedException();
+            //TODO: Move to config
+            return new SimulationSettings() { PoplationsLimit  = 10};
         }
     }
 }

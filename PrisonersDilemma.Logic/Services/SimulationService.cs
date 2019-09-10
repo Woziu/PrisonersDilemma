@@ -58,6 +58,7 @@ namespace PrisonersDilemma.Logic.Services
 
                 if (isPopulationConsistent)
                 {
+                    players = population.Players;
                     break;
                 }
                 else
