@@ -12,12 +12,10 @@ namespace PrisonersDilemma.Logic.Services
 {
     public class GameService : IGameService
     {
-        private readonly IGameRepository _gameRepository;
         private readonly IStrategyService _strategyService;
         private readonly GameSettings _gameSettings;
-        public GameService(IGameRepository gameRepository, IStrategyService strategyService, IGameSettingsProvider gameSettingsProvider)
+        public GameService(IStrategyService strategyService, IGameSettingsProvider gameSettingsProvider)
         {
-            _gameRepository = gameRepository;
             _strategyService = strategyService;
             _gameSettings = gameSettingsProvider.GetGameSettings();
         }
@@ -64,6 +62,6 @@ namespace PrisonersDilemma.Logic.Services
                 round.FirstPlayerScore += _gameSettings.CooperateModifier;
             }
             return round;
-        }               
+        }
     }
 }

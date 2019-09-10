@@ -6,6 +6,6 @@ namespace PrisonersDilemma.Core.Settings
 {
     public class SimulationSettings
     {
-        public int SimulationsLimit { get; set; }
+        public int PoplationsLimit { get; set; }
     }
 }

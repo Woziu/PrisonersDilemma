@@ -22,18 +22,20 @@ namespace PrisonersDilemma.UnitTests
         {
             string strategyId = Guid.NewGuid().ToString();
             var simulationRepositoryMock = new Mock<ISimulationRepository>();
-            var strategyRepositoryMock = new Mock<IStrategyRepository>();
+            var strategyServiceMock = new Mock<IStrategyService>();
             var populationServiceMock = new Mock<IPopulationService>();
             var settingsProviderMock = new Mock<ISimulationSettingsProvider>();
 
+            populationServiceMock.Setup(x => x.Evaluate(It.IsAny<List<Player>>()))
+                .Returns((List<Player> p) => Task.FromResult(new Population() { Players = p }));
             populationServiceMock.Setup(x => x.IsPopulationConsistent(It.IsAny<Population>()))
                 .Returns(Task.FromResult(true));
 
-            strategyRepositoryMock.Setup(x => x.GetStrategyById(It.IsAny<string>()))
-                .Returns(GetCoopStrategy(strategyId));
+            strategyServiceMock.Setup(x => x.GetStrategiesById(It.IsAny<List<string>>()))
+                .Returns(new List<Strategy>() { GetCoopStrategy(strategyId) });
 
             settingsProviderMock.Setup(x => x.GetSimulationSettings())
-                .Returns(new SimulationSettings() { SimulationsLimit = 10 });
+                .Returns(new SimulationSettings() { PoplationsLimit = 10 });
 
             List<Player> players = new List<Player>();
             for (int i = 0; i < 10; i++)
@@ -42,7 +44,7 @@ namespace PrisonersDilemma.UnitTests
             }
 
             SimulationService simulationService = new SimulationService(simulationRepositoryMock.Object,
-                populationServiceMock.Object, strategyRepositoryMock.Object, settingsProviderMock.Object);
+                populationServiceMock.Object, strategyServiceMock.Object, settingsProviderMock.Object);
 
             Simulation simulation = await simulationService.Run(players);
             
@@ -50,97 +52,70 @@ namespace PrisonersDilemma.UnitTests
         }
 
         [TestMethod]
-        public async Task Get_Distinct_Strategy_For_Every_Player()
+        public async Task Get_Players_Strategies()
         {
-            string strategyId = Guid.NewGuid().ToString();
-            var simulationRepositoryMock = new Mock<ISimulationRepository>();
-            var strategyRepositoryMock = new Mock<IStrategyRepository>();
-            var populationServiceMock = new Mock<IPopulationService>();
-            var settingsProviderMock = new Mock<ISimulationSettingsProvider>();
-
-            populationServiceMock.Setup(x => x.IsPopulationConsistent(It.IsAny<Population>()))
-                .Returns(Task.FromResult(true));
-
-            strategyRepositoryMock.Setup(x => x.GetStrategyById(It.IsAny<string>()))
-                .Returns(GetCoopStrategy(strategyId));
-
-            settingsProviderMock.Setup(x => x.GetSimulationSettings())
-                .Returns(new SimulationSettings() { SimulationsLimit = 10 });
-
-            List<Player> players = new List<Player>();
+            var players = new List<Player>();
+            var strategies = new List<Strategy>();
             for (int i = 0; i < 10; i++)
             {
-                players.Add(new Player() { StrategyId = Guid.NewGuid().ToString() });
+                string id = Guid.NewGuid().ToString();
+                players.Add(new Player() { StrategyId = id });
+                strategies.Add(GetCoopStrategy(id));
             }
 
-            SimulationService simulationService = new SimulationService(simulationRepositoryMock.Object,
-                populationServiceMock.Object, strategyRepositoryMock.Object, settingsProviderMock.Object);
-
-            List<Player> newPlayers = simulationService.GetPlayersStrategies(players);
-
-            strategyRepositoryMock.Verify(x => x.GetStrategyById(It.IsAny<string>()), Times.Exactly(players.Count));            
-            //no assert required since Verify throws exception if fails
-        }
-        [TestMethod]
-        public async Task Get_Only_Distinct_Strategies()
-        {            
             var simulationRepositoryMock = new Mock<ISimulationRepository>();
-            var strategyRepositoryMock = new Mock<IStrategyRepository>();
+            var strategyServiceMock = new Mock<IStrategyService>();
             var populationServiceMock = new Mock<IPopulationService>();
             var settingsProviderMock = new Mock<ISimulationSettingsProvider>();
 
             populationServiceMock.Setup(x => x.IsPopulationConsistent(It.IsAny<Population>()))
                 .Returns(Task.FromResult(true));
 
-            strategyRepositoryMock.Setup(x => x.GetStrategyById(It.IsAny<string>()))
-                .Returns((string s) => GetCoopStrategy(s));
+            strategyServiceMock.Setup(x => x.GetStrategiesById(It.IsAny<List<string>>()))
+                .Returns(strategies);
 
             settingsProviderMock.Setup(x => x.GetSimulationSettings())
-                .Returns(new SimulationSettings() { SimulationsLimit = 10 });
+                .Returns(new SimulationSettings() { PoplationsLimit = 10 });
 
-            int distinctStrategies = 5;
-            List<Player> players = new List<Player>();
-            for (int i = 0; i < distinctStrategies; i++)
-            {
-                string strategyId = Guid.NewGuid().ToString();
-                players.Add(new Player() { StrategyId = strategyId });
-            }
+            
 
             SimulationService simulationService = new SimulationService(simulationRepositoryMock.Object,
-                populationServiceMock.Object, strategyRepositoryMock.Object, settingsProviderMock.Object);
+                populationServiceMock.Object, strategyServiceMock.Object, settingsProviderMock.Object);
 
             List<Player> newPlayers = simulationService.GetPlayersStrategies(players);
 
-            strategyRepositoryMock.Verify(x => x.GetStrategyById(It.IsAny<string>()), Times.Exactly(distinctStrategies));
+            strategyServiceMock.Verify(x => x.GetStrategiesById(It.IsAny<List<string>>()), Times.Exactly(1));            
             //no assert required since Verify throws exception if fails
-        }
+        }        
 
         [TestMethod]
         public async Task Consistent_Strategy_Wins()
         {
             string strategyId = Guid.NewGuid().ToString();
-            var simulationRepositoryMock = new Mock<ISimulationRepository>();
-            var strategyRepositoryMock = new Mock<IStrategyRepository>();
-            var populationServiceMock = new Mock<IPopulationService>();
-            var settingsProviderMock = new Mock<ISimulationSettingsProvider>();
-
-            populationServiceMock.Setup(x => x.IsPopulationConsistent(It.IsAny<Population>()))
-                .Returns(Task.FromResult(true));           
-
-            strategyRepositoryMock.Setup(x => x.GetStrategyById(It.IsAny<string>()))
-                .Returns(GetCoopStrategy(strategyId));
-
-            settingsProviderMock.Setup(x => x.GetSimulationSettings())
-                .Returns(new SimulationSettings() { SimulationsLimit = 10 });
-            
-            List<Player> players = new List<Player>();
+            var players = new List<Player>();
             for (int i = 0; i < 10; i++)
             {
                 players.Add(new Player() { StrategyId = strategyId });
             }
 
+            var simulationRepositoryMock = new Mock<ISimulationRepository>();
+            var strategyServiceMock = new Mock<IStrategyService>();
+            var populationServiceMock = new Mock<IPopulationService>();
+            var settingsProviderMock = new Mock<ISimulationSettingsProvider>();
+
+            populationServiceMock.Setup(x => x.Evaluate(It.IsAny<List<Player>>()))
+                .Returns((List<Player> p) => Task.FromResult(new Population() { Players = p }));
+            populationServiceMock.Setup(x => x.IsPopulationConsistent(It.IsAny<Population>()))
+                .Returns(Task.FromResult(true));
+
+            strategyServiceMock.Setup(x => x.GetStrategiesById(It.IsAny<List<string>>()))
+                .Returns(new List<Strategy>() { GetCoopStrategy(strategyId) });
+
+            settingsProviderMock.Setup(x => x.GetSimulationSettings())
+                .Returns(new SimulationSettings() { PoplationsLimit = 10 });           
+
             SimulationService simulationService = new SimulationService(simulationRepositoryMock.Object,
-                populationServiceMock.Object, strategyRepositoryMock.Object, settingsProviderMock.Object);
+                populationServiceMock.Object, strategyServiceMock.Object, settingsProviderMock.Object);
 
             Simulation simulation = await simulationService.Run(players);
 
@@ -152,7 +127,7 @@ namespace PrisonersDilemma.UnitTests
         {
             string strategyId = Guid.NewGuid().ToString();
             var simulationRepositoryMock = new Mock<ISimulationRepository>();
-            var strategyRepositoryMock = new Mock<IStrategyRepository>();
+            var strategyServiceMock = new Mock<IStrategyService>();
             var populationServiceMock = new Mock<IPopulationService>();
             var settingsProviderMock = new Mock<ISimulationSettingsProvider>();
 
@@ -165,11 +140,11 @@ namespace PrisonersDilemma.UnitTests
             populationServiceMock.Setup(x => x.GetNewPopulation(It.IsAny<Population>()))
                 .Returns((Population p) => Task.FromResult(new Population() { Players = p.Players }));
 
-            strategyRepositoryMock.Setup(x => x.GetStrategyById(It.IsAny<string>()))
-                .Returns(GetCoopStrategy(strategyId));
+            strategyServiceMock.Setup(x => x.GetStrategiesById(It.IsAny<List<string>>()))
+                .Returns(new List<Strategy>() { GetCoopStrategy(strategyId) });
 
             settingsProviderMock.Setup(x => x.GetSimulationSettings())
-                .Returns(new SimulationSettings() { SimulationsLimit = 10 });
+                .Returns(new SimulationSettings() { PoplationsLimit = 10 });
 
             List<Player> players = new List<Player>();
             for (int i = 0; i < 10; i++)
@@ -178,7 +153,7 @@ namespace PrisonersDilemma.UnitTests
             }
 
             SimulationService simulationService = new SimulationService(simulationRepositoryMock.Object,
-                populationServiceMock.Object, strategyRepositoryMock.Object, settingsProviderMock.Object);
+                populationServiceMock.Object, strategyServiceMock.Object, settingsProviderMock.Object);
 
             Simulation simulation = await simulationService.Run(players);
 
@@ -189,14 +164,14 @@ namespace PrisonersDilemma.UnitTests
         public async Task Throw_Exception_When_No_Players()
         {
             var simulationRepositoryMock = new Mock<ISimulationRepository>();            
-            var strategyRepositoryMock = new Mock<IStrategyRepository>();
+            var strategyServiceMonk = new Mock<IStrategyService>();
             var populationServiceMock = new Mock<IPopulationService>();
             var settingsProviderMock = new Mock<ISimulationSettingsProvider>();
 
             SimulationService simulationService = new SimulationService(simulationRepositoryMock.Object,
-                populationServiceMock.Object, strategyRepositoryMock.Object, settingsProviderMock.Object);
-           //TODO:fix this
-            var ex = Assert.ThrowsException<ArgumentNullException>( () => simulationService.Run(new List<Player>()));
+                populationServiceMock.Object, strategyServiceMonk.Object, settingsProviderMock.Object);
+
+            var ex = Assert.ThrowsExceptionAsync<ArgumentNullException>( () => simulationService.Run(new List<Player>()));
             Assert.IsNotNull(ex);
         }
 

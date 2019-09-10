@@ -10,16 +10,11 @@ namespace PrisonersDilemma.Logic.Services
 {
     public class PopulationService : IPopulationService
     {
-        private readonly IPopulationRepository _populationRepository;
         private readonly IGameService _gameService;
-        private readonly IGameRepository _gameRepository;
 
-        public PopulationService(IPopulationRepository populationRepository, IGameService gameService,
-            IGameRepository gameRepository)
+        public PopulationService(IGameService gameService)
         {
-            _populationRepository = populationRepository;
             _gameService = gameService;
-            _gameRepository = gameRepository;
         }
         
         public async Task<Population> Evaluate(List<Player> players)
@@ -84,6 +79,10 @@ namespace PrisonersDilemma.Logic.Services
 
         public Task<bool> IsPopulationConsistent(Population population)
         {
+            if (population == null)
+            {
+                throw new ArgumentNullException("There is no population");
+            }
             string firstStrategy = population.Players[0].StrategyId;
             foreach (Player player in population.Players)
             {
@@ -95,22 +94,6 @@ namespace PrisonersDilemma.Logic.Services
             return Task.FromResult(true);
         }
 
-        public async Task SavePopulationAsync(string simulationId, Population population)
-        {
-            await _populationRepository.SavePopulationAsync(simulationId, population);
-            //save games async
-            List<Task> saveGameTask = new List<Task>();
-            foreach (Game game in population.Games)
-            {
-                saveGameTask.Add(_gameRepository.SaveGameAsync(population.Id, game));
-            }
-            //wait for all operations to finish
-            while(saveGameTask.Any())
-            {
-                Task finished = await Task.WhenAny(saveGameTask);
-                saveGameTask.Remove(finished);
-            }
-        }
         private Dictionary<string, int> GetScorePerStrategy(Population population)
         {           
             Dictionary<string, int> scorePerStrategy = new Dictionary<string, int>();

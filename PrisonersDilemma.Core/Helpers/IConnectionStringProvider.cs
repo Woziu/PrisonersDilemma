@@ -7,5 +7,8 @@ namespace PrisonersDilemma.Core.Helpers
     public interface IConnectionStringProvider
     {
         string GetConnectionString();
+        string GetDatabase();
+        string GetStrategyCollectionName();
+        string GetSimulaionCollectionName();
     }
 }
