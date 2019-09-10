@@ -44,7 +44,6 @@ namespace PrisonersDilemma.Logic.Services
             }
             return Task.FromResult(new PlayerMove() { PlayerId = player.Id, Type = selectedMove });            
         }
-
         private bool MoveConditionsMet(string thisPlayerId, Move move, List<Round> roundsHistory)//conditions met or completed?
         {
             if (move.Conditions == null) return true;
@@ -80,6 +79,34 @@ namespace PrisonersDilemma.Logic.Services
                 }                
             }
             return ok;
+        }
+
+        public List<Strategy> GetStrategiesById(List<string> idList)
+        {
+            List<Strategy> strategies = _strategyRepository.Get(idList);
+            //check if strategie are complete
+            if (strategies != null && strategies.Any())
+            {
+                for (int i = 0; i < strategies.Count; i++)
+                {
+                    if (strategies[i].Moves != null && strategies[i].Moves.Any())
+                    {
+                        for (int j = 0; j < strategies[i].Moves.Count; j++)
+                        {
+                            //calculate total depth and priority if none
+                            if (strategies[i].Moves[j].TotalDepth == 0 && strategies[i].Moves[j].Conditions != null)
+                            {
+                                strategies[i].Moves[j].TotalDepth = strategies[i].Moves[j].Conditions.Max(c => c.Depth);
+                            }
+                            if (strategies[i].Moves[j].Priority == 0)
+                            {
+                                strategies[i].Moves[j].Priority = strategies[i].Moves[j].TotalDepth;
+                            }
+                        }
+                    }                    
+                }
+            }
+            return strategies;
         }
     }
 }

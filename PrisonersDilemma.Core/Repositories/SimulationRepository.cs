@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using MongoDB.Driver;
 using PrisonersDilemma.Core.Helpers;
 using PrisonersDilemma.Core.Models;
 
@@ -9,21 +10,29 @@ namespace PrisonersDilemma.Core.Repositories
 {
     public class SimulationRepository : ISimulationRepository
     {
-        private readonly string _connectionString;
+        private readonly IMongoCollection<Simulation> _simulations;
 
         public SimulationRepository(IConnectionStringProvider connectionStringProvider)
         {
-            _connectionString = connectionStringProvider.GetConnectionString();
+            var client = new MongoClient(connectionStringProvider.GetConnectionString());
+            var database = client.GetDatabase(connectionStringProvider.GetDatabase());
+            _simulations = database.GetCollection<Simulation>(connectionStringProvider.GetSimulaionCollectionName());
         }
 
-        public void SaveSimulation(Simulation simulation)
+        public int SaveSimulation(Simulation simulation)
         {
             throw new NotImplementedException();
         }
 
-        public Task SaveSimulationAsync(Simulation simulation)
+        public async Task<string> SaveAsync(Simulation simulation)
         {
-            throw new NotImplementedException();
+            await _simulations.InsertOneAsync(simulation);
+            return simulation.Id;
         }
+
+        public async Task UpdateAsync(Simulation simulation) =>
+            await _simulations.ReplaceOneAsync(s => s.Id == simulation.Id, simulation);
+
+
     }
 }

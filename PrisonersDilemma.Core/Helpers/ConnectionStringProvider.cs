@@ -11,5 +11,20 @@ namespace PrisonersDilemma.Core.Helpers
             return "";
             throw new NotImplementedException();
         }
+
+        public string GetDatabase()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetSimulaionCollectionName()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetStrategyCollectionName()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

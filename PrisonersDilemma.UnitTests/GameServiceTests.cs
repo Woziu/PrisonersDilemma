@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PrisonersDilemma.UnitTests
+namespace PrisonersDilemma.UnitTests//TODO:Rename project to PrisonersDilemma.Tests.Unit? when bored
 {
     [TestClass]
     public class GameServiceTests
@@ -57,7 +57,6 @@ namespace PrisonersDilemma.UnitTests
 
         public GameService GetBasicMockedCoopStrategyServices()
         {
-            var gameMock = new Mock<IGameRepository>();
             var strategyMock = new Mock<IStrategyService>();
             var gameSettingsMock = new Mock<IGameSettingsProvider>();
 
@@ -66,12 +65,11 @@ namespace PrisonersDilemma.UnitTests
 
             gameSettingsMock.Setup(x => x.GetGameSettings()).Returns(GetTestSettings());
 
-            return new GameService(gameMock.Object, strategyMock.Object, gameSettingsMock.Object);
+            return new GameService(strategyMock.Object, gameSettingsMock.Object);
         }
 
         public GameService GetBasicMockedCheatStrategyServices()
         {
-            var gameMock = new Mock<IGameRepository>();
             var strategyMock = new Mock<IStrategyService>();
             var gameSettingsMock = new Mock<IGameSettingsProvider>();
 
@@ -80,7 +78,7 @@ namespace PrisonersDilemma.UnitTests
 
             gameSettingsMock.Setup(x => x.GetGameSettings()).Returns(GetTestSettings());
 
-            return new GameService(gameMock.Object, strategyMock.Object, gameSettingsMock.Object);
+            return new GameService(strategyMock.Object, gameSettingsMock.Object);
         }
 
         private Game GetSampleGame()
