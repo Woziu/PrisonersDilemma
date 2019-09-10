@@ -12,17 +12,17 @@ namespace PrisonersDilemma.Logic.Services
 {
     public class SimulationService : ISimulationService
     {
-        private readonly IPopulationService _populationService;
         private readonly ISimulationRepository _simulationRepository;
+        private readonly IPopulationService _populationService;        
         private readonly IStrategyService _strategyService;
         private readonly SimulationSettings _simulationSettings;
                
         public SimulationService(ISimulationRepository simulationRepository, IPopulationService populationService, 
-            IStrategyService strategyRepository, ISimulationSettingsProvider simulationSettingsProdiver)
+            IStrategyService strategyService, ISimulationSettingsProvider simulationSettingsProdiver)
         {
             _populationService = populationService;
             _simulationRepository = simulationRepository;
-            _strategyService = strategyRepository;
+            _strategyService = strategyService;
             _simulationSettings = simulationSettingsProdiver.GetSimulationSettings();
         }
         public async Task<Simulation> Run(List<Player> players)
@@ -37,7 +37,7 @@ namespace PrisonersDilemma.Logic.Services
             Simulation simulation = new Simulation()
             {
                 StartDate = DateTime.Now,
-                SimulationsLimit = _simulationSettings.PoplationsLimit,
+                PopulationsLimit = _simulationSettings.PoplationsLimit,
                 EntryPlayers = players,
                 Populations = new List<Population>()
             };
@@ -70,7 +70,7 @@ namespace PrisonersDilemma.Logic.Services
             while (currentPopulation < _simulationSettings.PoplationsLimit);
 
             simulation.FinishDate = DateTime.Now;
-            simulation.SimulationsCompleated = currentPopulation;
+            simulation.PopulationsCompleated = currentPopulation;
             simulation.Winner = isPopulationConsistent ? players.FirstOrDefault() : null;
 
             await _simulationRepository.UpdateAsync(simulation);
