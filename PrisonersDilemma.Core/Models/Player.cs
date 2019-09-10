@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,7 +9,9 @@ namespace PrisonersDilemma.Core.Models
     {
         public string Id { get; set; }
         public string StrategyId { get; set; }
+        public string StrategyName { get; set; }
         public int Score { get; set; }
-        public Strategy Strategy { get; set; }//dont store in db
+        [BsonIgnore]
+        public Strategy Strategy { get; set; }
     }
 }

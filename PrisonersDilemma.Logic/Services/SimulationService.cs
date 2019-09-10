@@ -98,6 +98,7 @@ namespace PrisonersDilemma.Logic.Services
                 if (players[i].Strategy == null)
                 {
                     players[i].Strategy = strategies[players[i].StrategyId];
+                    players[i].StrategyName = strategies[players[i].StrategyId].Name;
                 }
             }
             return players;
