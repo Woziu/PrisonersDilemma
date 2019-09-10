@@ -13,7 +13,8 @@ namespace PrisonersDilemma.Core.Helpers
             return new GameSettings()
             {
                 MoveModifier = -1,                
-                CooperateModifier = 3
+                CooperateModifier = 3,
+                TotalRounds = 10
             };            
         }
     }
