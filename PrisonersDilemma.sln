@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrisonersDilemma.Logic", "P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrisonersDilemma.UnitTests", "PrisonersDilemma.UnitTests\PrisonersDilemma.UnitTests.csproj", "{EB5B6C3A-0879-4F92-AD8D-34DE21E0148A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrisonersDilemma.Tests.Integration", "PrisonersDilemma.Tests.Integration\PrisonersDilemma.Tests.Integration.csproj", "{D195AE35-DFF1-4C60-AE45-78DC22A2D68A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrisonersDilemma.Tests.Integration", "PrisonersDilemma.Tests.Integration\PrisonersDilemma.Tests.Integration.csproj", "{D195AE35-DFF1-4C60-AE45-78DC22A2D68A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrisonersDilemma.GUI", "PrisonersDilemma.GUI\PrisonersDilemma.GUI.csproj", "{ACCAF9D8-43FF-4AAD-8F2C-351608C7988B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{D195AE35-DFF1-4C60-AE45-78DC22A2D68A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D195AE35-DFF1-4C60-AE45-78DC22A2D68A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D195AE35-DFF1-4C60-AE45-78DC22A2D68A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACCAF9D8-43FF-4AAD-8F2C-351608C7988B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACCAF9D8-43FF-4AAD-8F2C-351608C7988B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACCAF9D8-43FF-4AAD-8F2C-351608C7988B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACCAF9D8-43FF-4AAD-8F2C-351608C7988B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
