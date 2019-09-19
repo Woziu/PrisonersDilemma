@@ -1,4 +1,9 @@
-﻿using PrisonersDilemma.Core.Models;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Conventions;
+using PrisonersDilemma.Core.Helpers;
+using PrisonersDilemma.Core.Models;
+using PrisonersDilemma.Core.Repositories;
+using PrisonersDilemma.Logic.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,11 +18,39 @@ namespace PrisonersDilemma.GUI
 {
     public partial class Form1 : Form
     {
+        public class MongoTestConventions : IConventionPack
+        {
+            private static bool conventionsRegistred = false;
+            
+            public IEnumerable<IConvention> Conventions => new List<IConvention>()
+            {
+                new IgnoreExtraElementsConvention(true),
+                new EnumRepresentationConvention(BsonType.String),
+                new CamelCaseElementNameConvention()
+            };
+
+            public static void RegisterConventions()
+            {
+                if (conventionsRegistred)
+                {
+                    return;
+                }
+
+                ConventionRegistry.Register("CustomConventions", new MongoTestConventions(), x => true);
+                conventionsRegistred = true;
+            }
+        }
+
+        ConnectionStringProvider connectionStringProvider = new ConnectionStringProvider("connection.txt");
         public Dictionary<string, int> StrategiesPerSimulation { get; set; }
+        List<Strategy> Strategies = new List<Strategy>();
         public Form1()
         {
             InitializeComponent();
             StrategiesPerSimulation = new Dictionary<string, int>();
+
+            ConventionRegistry.Register("CustomConventions", new MongoTestConventions(), x => true);
+
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -35,17 +68,19 @@ namespace PrisonersDilemma.GUI
                 strategyName + ": " + StrategiesPerSimulation[strategyName] : null;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
             //get strategies names from db
-            List<Strategy> strategies = new List<Strategy>();
             //clear listbox
             listBox1.Items.Clear();
             AddLogLine("Updating strategies list...");
             //add names
-            strategies.Add(new Strategy() { Name = "Simple Cooperator" });
-            strategies.Add(new Strategy() { Name = "Simple Cheater" });
-            strategies.ForEach(s => listBox1.Items.Add(s.Name));
+            
+            StrategyRepository repo = new StrategyRepository(connectionStringProvider);
+            Strategies = await new StrategyService(repo).GetAllStrategies();
+            //strategies.Add(new Strategy() { Name = "Simple Cooperator" });
+            //strategies.Add(new Strategy() { Name = "Simple Cheater" });
+            Strategies.ForEach(s => listBox1.Items.Add(s.Name));
             AddLogLine("Updated strategies list");
         }
 
@@ -136,6 +171,46 @@ namespace PrisonersDilemma.GUI
         private void groupBox1_Enter(object sender, EventArgs e)
         {
 
+        }
+
+        private async void button6_Click(object sender, EventArgs e)
+        {
+            var simRepo = new SimulationRepository(connectionStringProvider);
+            var gameSettings = new GameSettingsProvider();
+
+            var strategyService = new StrategyService(new StrategyRepository(connectionStringProvider));
+            var popService = new PopulationService(new GameService(strategyService, gameSettings));
+            SimulationService simService = new SimulationService(simRepo, popService, strategyService, new SimulationSettingsProvider());
+            List<Player> players = GetPlayersForSimulation();
+            try
+            {
+                Simulation sim = await simService.Run(players);
+                if (sim.Winner != null)
+                {
+                    MessageBox.Show($"{sim.Winner} : {sim.Winner.StrategyName}");
+                }
+                MessageBox.Show("No winner");
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private List<Player> GetPlayersForSimulation()
+        {
+            var list = new List<Player>();
+            foreach(var kvp in StrategiesPerSimulation)
+            {
+                string name = kvp.Key;
+                int strategiesCount = kvp.Value;
+                Strategy strategy = Strategies.Where(s => s.Name == name).FirstOrDefault();
+                for(int i = 0; i < strategiesCount; i++)
+                {
+                    list.Add(new Player() { Id = Guid.NewGuid().ToString(), StrategyName = strategy.Name, StrategyId = strategy.Id });
+                }
+            }
+            return list;
         }
     }
 }

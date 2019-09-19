@@ -30,6 +30,7 @@
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.button7 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.listBox2 = new System.Windows.Forms.ListBox();
@@ -42,7 +43,6 @@
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
             this.listBox3 = new System.Windows.Forms.ListBox();
-            this.button7 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -76,6 +76,15 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Simulation";
             this.groupBox3.Enter += new System.EventHandler(this.groupBox3_Enter);
+            // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(6, 242);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(150, 23);
+            this.button7.TabIndex = 3;
+            this.button7.Text = "Add to queue";
+            this.button7.UseVisualStyleBackColor = true;
             // 
             // button4
             // 
@@ -163,6 +172,7 @@
             this.button6.TabIndex = 3;
             this.button6.Text = "Start";
             this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // groupBox5
             // 
@@ -195,15 +205,6 @@
             this.listBox3.Size = new System.Drawing.Size(156, 225);
             this.listBox3.TabIndex = 0;
             this.listBox3.SelectedIndexChanged += new System.EventHandler(this.listBox3_SelectedIndexChanged);
-            // 
-            // button7
-            // 
-            this.button7.Location = new System.Drawing.Point(6, 242);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(150, 23);
-            this.button7.TabIndex = 3;
-            this.button7.Text = "Add to queue";
-            this.button7.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
