@@ -9,7 +9,7 @@ namespace PrisonersDilemma.Tests.Integration
         [TestMethod]
         public void Get_Mongo_ConnectionString_From_File()
         {
-            IConnectionStringProvider connection = new TestConnectionStringPrivider("connection.txt");
+            IConnectionStringProvider connection = new TestConnectionPrivider("connection.txt");
             Assert.IsTrue(connection.GetConnectionString().Contains("mongo"));
         }
     }

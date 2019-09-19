@@ -18,6 +18,7 @@ namespace PrisonersDilemma.Logic.Services
         }
         public Task<PlayerMove> GetNextMoveAsync(Player player, List<Round> roundsHistory)
         {
+            //TODO: problably can be sync
             int maxPriority = 100;
             int topPriority = -1;
             MoveType selectedMove = MoveType.Undefined;
@@ -46,6 +47,7 @@ namespace PrisonersDilemma.Logic.Services
         }
         private bool MoveConditionsMet(string thisPlayerId, Move move, List<Round> roundsHistory)//conditions met or completed?
         {
+            //TODO: this sould be tested
             if (move.Conditions == null) return true;
 
             bool ok = true;
@@ -107,6 +109,15 @@ namespace PrisonersDilemma.Logic.Services
                 }
             }
             return strategies;
+        }
+
+        public async Task<List<Strategy>> GetAllStrategies() =>
+             await _strategyRepository.GetAll();   
+        
+        public async Task<Strategy> GetStrategyByName(string name)
+        {
+            List<Strategy> allStrategies = await _strategyRepository.GetAll();
+            return allStrategies.Where(s => s.Name == name).FirstOrDefault();
         }
     }
 }

@@ -12,17 +12,17 @@ namespace PrisonersDilemma.Logic.Services
 {
     public class SimulationService : ISimulationService
     {
-        private readonly IPopulationService _populationService;
         private readonly ISimulationRepository _simulationRepository;
+        private readonly IPopulationService _populationService;        
         private readonly IStrategyService _strategyService;
         private readonly SimulationSettings _simulationSettings;
                
         public SimulationService(ISimulationRepository simulationRepository, IPopulationService populationService, 
-            IStrategyService strategyRepository, ISimulationSettingsProvider simulationSettingsProdiver)
+            IStrategyService strategyService, ISimulationSettingsProvider simulationSettingsProdiver)
         {
             _populationService = populationService;
             _simulationRepository = simulationRepository;
-            _strategyService = strategyRepository;
+            _strategyService = strategyService;
             _simulationSettings = simulationSettingsProdiver.GetSimulationSettings();
         }
         public async Task<Simulation> Run(List<Player> players)
@@ -37,7 +37,7 @@ namespace PrisonersDilemma.Logic.Services
             Simulation simulation = new Simulation()
             {
                 StartDate = DateTime.Now,
-                SimulationsLimit = _simulationSettings.PoplationsLimit,
+                PopulationsLimit = _simulationSettings.PoplationsLimit,
                 EntryPlayers = players,
                 Populations = new List<Population>()
             };
@@ -58,6 +58,7 @@ namespace PrisonersDilemma.Logic.Services
 
                 if (isPopulationConsistent)
                 {
+                    players = population.Players;
                     break;
                 }
                 else
@@ -70,7 +71,7 @@ namespace PrisonersDilemma.Logic.Services
             while (currentPopulation < _simulationSettings.PoplationsLimit);
 
             simulation.FinishDate = DateTime.Now;
-            simulation.SimulationsCompleated = currentPopulation;
+            simulation.PopulationsCompleated = currentPopulation;
             simulation.Winner = isPopulationConsistent ? players.FirstOrDefault() : null;
 
             await _simulationRepository.UpdateAsync(simulation);
@@ -80,6 +81,7 @@ namespace PrisonersDilemma.Logic.Services
 
         public List<Player> GetPlayersStrategies(List<Player> players)
         {
+            //TODO: probably should be tested
             //limit db connections by getting each strategy only oncefa
             List<string> distinctStrategies = players
                 .Where(p => p.Strategy == null)
@@ -96,6 +98,7 @@ namespace PrisonersDilemma.Logic.Services
                 if (players[i].Strategy == null)
                 {
                     players[i].Strategy = strategies[players[i].StrategyId];
+                    players[i].StrategyName = strategies[players[i].StrategyId].Name;
                 }
             }
             return players;

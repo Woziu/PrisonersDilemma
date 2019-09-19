@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PrisonersDilemma.Core\PrisonersDilemma.Core.csproj" />
+    <ProjectReference Include="..\PrisonersDilemma.Logic\PrisonersDilemma.Logic.csproj" />
   </ItemGroup>
 
 </Project>

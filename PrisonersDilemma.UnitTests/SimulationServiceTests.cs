@@ -48,7 +48,7 @@ namespace PrisonersDilemma.UnitTests
 
             Simulation simulation = await simulationService.Run(players);
             
-            Assert.AreEqual(1, simulation.SimulationsCompleated);
+            Assert.AreEqual(1, simulation.PopulationsCompleated);
         }
 
         [TestMethod]
