@@ -9,7 +9,7 @@ namespace PrisonersDilemma.Core.Repositories
     public interface IStrategyRepository
     {
         Strategy Get(string id);
-        List<Strategy> Get(List<string> idList);
+        Task<List<Strategy>> GetAsync(List<string> idList);
         Task<List<Strategy>> GetAll();
         Task<Strategy> GetAsync(string id);
         Task<Strategy> GetByNameAsync(string strategyName);

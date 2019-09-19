@@ -19,7 +19,7 @@ namespace PrisonersDilemma.Logic.Services
             _strategyService = strategyService;
             _gameSettings = gameSettingsProvider.GetGameSettings();
         }
-        public async Task<Game> PlayAsync(Player firstPlayer, Player secondPlayer)
+        public Game Play(Player firstPlayer, Player secondPlayer)
         {
             string playerId1 = firstPlayer.Id;
             string playerId2 = secondPlayer.Id;
@@ -27,8 +27,8 @@ namespace PrisonersDilemma.Logic.Services
             for (int i = 1; i <= _gameSettings.TotalRounds; i++)
             {
                 //make moves                
-                PlayerMove firstPlayerMove = await _strategyService.GetNextMoveAsync(firstPlayer, rounds);
-                PlayerMove secondPlayerMove = await _strategyService.GetNextMoveAsync(secondPlayer, rounds);
+                PlayerMove firstPlayerMove = _strategyService.GetNextMove(firstPlayer, rounds);
+                PlayerMove secondPlayerMove = _strategyService.GetNextMove(secondPlayer, rounds);
                 //add moves to history
                 rounds.Add(GetRound(i, firstPlayerMove, secondPlayerMove));                
             }

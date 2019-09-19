@@ -51,7 +51,7 @@ namespace PrisonersDilemma.Tests.Integration.ServicesTests
             {
                 players.Add(new Player() { StrategyId = cooperator.Id });
             }
-            players = simulationServce.GetPlayersStrategies(players);
+            players = await simulationServce.GetPlayersStrategies(players);
 
             bool badPlayers = players.Where(p => p.StrategyId != cooperator.Id).Any();
             Assert.IsFalse(badPlayers);

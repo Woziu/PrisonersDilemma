@@ -17,14 +17,13 @@ namespace PrisonersDilemma.Logic.Services
             _gameService = gameService;
         }
         
-        public async Task<Population> Evaluate(List<Player> players)
+        public Population Evaluate(List<Player> players)
         {
             Population population = new Population()
             {
                 Id = Guid.NewGuid().ToString(),
                 Games = new List<Game>()
             };
-            //TODO: check if async would be faster
             //play
             for (int i = 0; i < players.Count; i++)
             {
@@ -33,7 +32,7 @@ namespace PrisonersDilemma.Logic.Services
                     Player firstPlayer = players[i];
                     Player secondPlayer = players[j];
                     //play game between players
-                    Game game = await _gameService.PlayAsync(firstPlayer, secondPlayer);
+                    Game game = _gameService.Play(firstPlayer, secondPlayer);
                     //add score
                     players[i].Score += game.Rounds.Sum(r => r.FirstPlayerScore);
                     players[j].Score += game.Rounds.Sum(r => r.SecondPlayerScore);
@@ -46,7 +45,7 @@ namespace PrisonersDilemma.Logic.Services
             return population;
         }
 
-        public Population GetNewPopulation(Population population)//TODO: make sync
+        public Population GetNewPopulation(Population population)
         {
             List<Player> newPlayersList = new List<Player>();
             int totalScore = population.Players.Sum(p => p.Score);

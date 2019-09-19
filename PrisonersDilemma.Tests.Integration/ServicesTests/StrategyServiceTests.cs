@@ -25,12 +25,12 @@ namespace PrisonersDilemma.Tests.Integration.ServicesTests
             }
         }
         [TestMethod]
-        public void Get_Strategies_By_Id_Count_Equal_All_Strategies()
+        public async Task Get_Strategies_By_Id_Count_Equal_All_Strategies()
         {
             var strategyRepository = new StrategyRepository(connection);
             var strategyService = new StrategyService(strategyRepository);
             var strategiesIds = strategyService.GetAllStrategies().Result.Select(s => s.Id).ToList();
-            var strategies = strategyService.GetStrategiesById(strategiesIds);
+            var strategies = await strategyService.GetStrategiesById(strategiesIds);
             Assert.AreEqual(strategiesIds.Count, strategies.Count);
         }
 
@@ -51,7 +51,7 @@ namespace PrisonersDilemma.Tests.Integration.ServicesTests
                 players.Add(new Player() { StrategyId = cooperator.Id });
             }
 
-            var strategies = strategyService.GetStrategiesById(players.Select(p => p.StrategyId).ToList());
+            var strategies = await strategyService.GetStrategiesById(players.Select(p => p.StrategyId).ToList());
             Assert.AreEqual(2, strategies.Count);
         }
     }

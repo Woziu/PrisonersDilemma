@@ -43,13 +43,13 @@ namespace PrisonersDilemma.Logic.Services
             };
             await _simulationRepository.SaveAsync(simulation);
 
-            players = GetPlayersStrategies(players);
+            players = await GetPlayersStrategies(players);
 
             do
             {
                 currentPopulation++;
                 //evaluate players in current population
-                Population population = await _populationService.Evaluate(players);
+                Population population = _populationService.Evaluate(players);
                 //check if consistent
                 isPopulationConsistent = _populationService.IsPopulationConsistent(population);
 
@@ -79,26 +79,26 @@ namespace PrisonersDilemma.Logic.Services
             return simulation;
         }
 
-        public List<Player> GetPlayersStrategies(List<Player> players)
+        public async Task<List<Player>> GetPlayersStrategies(List<Player> players)
         {
-            //TODO: probably should be tested
             //limit db connections by getting each strategy only oncefa
             List<string> distinctStrategies = players
                 .Where(p => p.Strategy == null)
                 .Select(s => s.StrategyId)
                 .Distinct().ToList();
 
-            Dictionary<string, Strategy> strategies = _strategyService
-                .GetStrategiesById(distinctStrategies)
-                .Distinct()
-                .ToDictionary(k => k.Id, k => k);
-                        
+            List<Strategy> strategies = await _strategyService
+                .GetStrategiesById(distinctStrategies);
+
+            Dictionary<string, Strategy> strategiesDict = strategies
+                .Distinct().ToDictionary(k => k.Id, k => k);
+
             for (int i = 0; i < players.Count; i++)
             {
                 if (players[i].Strategy == null)
                 {
-                    players[i].Strategy = strategies[players[i].StrategyId];
-                    players[i].StrategyName = strategies[players[i].StrategyId].Name;
+                    players[i].Strategy = strategiesDict[players[i].StrategyId];
+                    players[i].StrategyName = strategiesDict[players[i].StrategyId].Name;
                 }
             }
             return players;

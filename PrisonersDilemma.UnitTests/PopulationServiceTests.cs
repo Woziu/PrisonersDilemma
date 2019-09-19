@@ -19,7 +19,7 @@ namespace PrisonersDilemma.UnitTests
     public class PopulationServiceTests
     {
         [TestMethod]
-        public async Task Scores_Are_Correct_After_Evaluation()
+        public void Scores_Are_Correct_After_Evaluation()
         {
             var gameServiceMock = new Mock<IGameService>();
 
@@ -29,8 +29,8 @@ namespace PrisonersDilemma.UnitTests
                 rounds.Add(new Round() { FirstPlayerScore = 2, SecondPlayerScore = -1 });
             }
 
-            gameServiceMock.Setup(g => g.PlayAsync(It.IsAny<Player>(), It.IsAny<Player>()))
-                .Returns(Task.FromResult(new Game() { Rounds = rounds }));
+            gameServiceMock.Setup(g => g.Play(It.IsAny<Player>(), It.IsAny<Player>()))
+                .Returns(new Game() { Rounds = rounds });
 
             var populationService = new PopulationService(gameServiceMock.Object);
 
@@ -43,7 +43,7 @@ namespace PrisonersDilemma.UnitTests
                 Id = Guid.NewGuid().ToString()
             };
 
-            Population population = await populationService.Evaluate(new List<Player>() { firstPlayer, secondPlayer });
+            Population population = populationService.Evaluate(new List<Player>() { firstPlayer, secondPlayer });
 
             Player newFirstPlayer = population.Players.Where(p => p.Id == firstPlayer.Id).FirstOrDefault();
             Player newSecondPlayer = population.Players.Where(p => p.Id == secondPlayer.Id).FirstOrDefault();
