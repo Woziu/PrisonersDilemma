@@ -19,13 +19,12 @@ namespace PrisonersDilemma.GUI
         public Form1(ISimulationService simulationService, IStrategyService strategyService)
         {
             InitializeComponent();
+
             _simulationService = simulationService;
             _strategyService = strategyService;
 
             StrategiesPerSimulation = new Dictionary<string, int>();
             Strategies = new List<Strategy>();
-
-
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)

@@ -1,12 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Autofac;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrisonersDilemma.Core.Helpers;
 using PrisonersDilemma.Core.Models;
 using PrisonersDilemma.Core.Repositories;
 using PrisonersDilemma.Logic.Services;
-using System;
+using PrisonersDilemma.Tests.Integration.Common;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PrisonersDilemma.Tests.Integration.ServicesTests
@@ -14,21 +14,26 @@ namespace PrisonersDilemma.Tests.Integration.ServicesTests
     [TestClass]
     public class StrategyServiceTests
     {
-        IConnectionStringProvider connection;
+        private IStrategyService strategyService;
+        private IStrategyRepository strategyRepository;
+
         [TestInitialize]
-        public void GetConnectionString()
+        public void Init()
         {
-            if (connection == null)
+            MongoTestConventions.RegisterConventions();
+            if (strategyService == null)
             {
-                MongoTestConventions.RegisterConventions();
-                connection = new TestConnectionPrivider("connection.txt");
+                strategyService = TestContainer.BuildContainer().Resolve<IStrategyService>();
+            }
+            if (strategyRepository == null)
+            {
+                strategyRepository = TestContainer.BuildContainer().Resolve<IStrategyRepository>();
             }
         }
+
         [TestMethod]
         public async Task Get_Strategies_By_Id_Count_Equal_All_Strategies()
         {
-            var strategyRepository = new StrategyRepository(connection);
-            var strategyService = new StrategyService(strategyRepository);
             var strategiesIds = strategyService.GetAllStrategies().Result.Select(s => s.Id).ToList();
             var strategies = await strategyService.GetStrategiesById(strategiesIds);
             Assert.AreEqual(strategiesIds.Count, strategies.Count);
@@ -37,9 +42,6 @@ namespace PrisonersDilemma.Tests.Integration.ServicesTests
         [TestMethod]
         public async Task Get_Strategies_By_Id_Count_Equal_Distinct_Strategies()
         {
-            var strategyRepository = new StrategyRepository(connection);
-            var strategyService = new StrategyService(strategyRepository);
-
             List<Strategy> allStrategies = await strategyService.GetAllStrategies();
             Strategy cheater = allStrategies.Where(s => s.Name == "Simple Cheater").FirstOrDefault();
             Strategy cooperator = allStrategies.Where(s => s.Name == "Simple Cooperator").FirstOrDefault();

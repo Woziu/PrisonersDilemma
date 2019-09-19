@@ -1,14 +1,14 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Autofac;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrisonersDilemma.Core.Helpers;
 using PrisonersDilemma.Core.Models;
 using PrisonersDilemma.Core.Repositories;
 using PrisonersDilemma.Core.Settings;
 using PrisonersDilemma.Logic.Services;
+using PrisonersDilemma.Tests.Integration.Common;
 using PrisonersDilemma.Tests.Integration.Strategies;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PrisonersDilemma.Tests.Integration.ServicesTests
@@ -16,33 +16,26 @@ namespace PrisonersDilemma.Tests.Integration.ServicesTests
     [TestClass]
     public class SimulationServiceTests
     {
-        IConnectionStringProvider connection;
-        GameSettingsProvider gameSettingsProvider;
+        private ISimulationService simulationService;
+        private IStrategyRepository strategyRepository;
+
         [TestInitialize]
-        public void GetConnectionString()
+        public void Init()
         {
-            if (connection == null)
+            MongoTestConventions.RegisterConventions();
+            if (simulationService == null)
             {
-                MongoTestConventions.RegisterConventions();
-                connection = new TestConnectionPrivider("connection.txt");
+                simulationService = TestContainer.BuildContainer().Resolve<ISimulationService>();
             }
-            if (gameSettingsProvider == null)
+            if (strategyRepository == null)
             {
-                gameSettingsProvider = new GameSettingsProvider();
+                strategyRepository = TestContainer.BuildContainer().Resolve<IStrategyRepository>();
             }
         }
 
         [TestMethod]
         public async Task Get_Cooperator_Players_Strategies()
         {
-            var strategyRepository = new StrategyRepository(connection);
-            var strategyService = new StrategyService(strategyRepository);
-            var simulationRepository = new SimulationRepository(connection);
-            var gameService = new GameService(strategyService, gameSettingsProvider);
-            var populationService = new PopulationService(gameService);
-            //TODO: simplify /\
-            var simulationServce = new SimulationService(simulationRepository, populationService,
-                strategyService, new SimulationSettingsProvider());
             Strategy cooperator = await strategyRepository
                 .GetByNameAsync(NoMemoryStrategies.GetSimpleCooperator().Name);
 
@@ -51,7 +44,7 @@ namespace PrisonersDilemma.Tests.Integration.ServicesTests
             {
                 players.Add(new Player() { StrategyId = cooperator.Id });
             }
-            players = await simulationServce.GetPlayersStrategies(players);
+            players = await simulationService.GetPlayersStrategies(players);
 
             bool badPlayers = players.Where(p => p.StrategyId != cooperator.Id).Any();
             Assert.IsFalse(badPlayers);
@@ -60,14 +53,6 @@ namespace PrisonersDilemma.Tests.Integration.ServicesTests
         [TestMethod]
         public async Task Run_Once_When_Consistent()
         {
-            var strategyRepository = new StrategyRepository(connection);
-            var strategyService = new StrategyService(strategyRepository);
-            var simulationRepository = new SimulationRepository(connection);
-            var gameService = new GameService(strategyService, gameSettingsProvider);
-            var populationService = new PopulationService(gameService);
-            //TODO: simplify /\
-            var simulationServce = new SimulationService(simulationRepository, populationService,
-                strategyService, new SimulationSettingsProvider());
             Strategy cooperator = await strategyRepository
                 .GetByNameAsync(NoMemoryStrategies.GetSimpleCooperator().Name);
 
@@ -77,7 +62,7 @@ namespace PrisonersDilemma.Tests.Integration.ServicesTests
                 players.Add(new Player() { StrategyId = cooperator.Id });
             }
 
-            Simulation simulation = await simulationServce.Run(players);
+            Simulation simulation = await simulationService.Run(players);
 
             Assert.IsNotNull(simulation.Winner);
             Assert.AreEqual(1, simulation.PopulationsCompleated);
@@ -86,14 +71,6 @@ namespace PrisonersDilemma.Tests.Integration.ServicesTests
         [TestMethod]
         public async Task Winner_Score_Is_Total_Score()
         {
-            var strategyRepository = new StrategyRepository(connection);
-            var strategyService = new StrategyService(strategyRepository);
-            var simulationRepository = new SimulationRepository(connection);
-            var gameService = new GameService(strategyService, gameSettingsProvider);
-            var populationService = new PopulationService(gameService);
-            //TODO: simplify /\
-            var simulationServce = new SimulationService(simulationRepository, populationService,
-                strategyService, new SimulationSettingsProvider());
             Strategy cooperator = await strategyRepository
                 .GetByNameAsync(NoMemoryStrategies.GetSimpleCooperator().Name);
 
@@ -103,10 +80,12 @@ namespace PrisonersDilemma.Tests.Integration.ServicesTests
                 players.Add(new Player() { StrategyId = cooperator.Id });
             }
 
-            Simulation simulation = await simulationServce.Run(players);
+            Simulation simulation = await simulationService.Run(players);
+
+            var gameSettingsProvider = TestContainer.BuildContainer().Resolve<IGameSettingsProvider>();
 
             GameSettings gameSettings = gameSettingsProvider.GetGameSettings();
-            int totalScore = gameSettings.TotalRounds 
+            int totalScore = gameSettings.TotalRounds
                 * (gameSettings.CooperateModifier + gameSettings.MoveModifier)
                 * (players.Count - 1);
 
