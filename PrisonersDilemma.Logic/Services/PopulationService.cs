@@ -35,7 +35,6 @@ namespace PrisonersDilemma.Logic.Services
                     //play game between players
                     Game game = await _gameService.PlayAsync(firstPlayer, secondPlayer);
                     //add score
-                    //TODO: this looks suspicious, verify with intergration tests
                     players[i].Score += game.Rounds.Sum(r => r.FirstPlayerScore);
                     players[j].Score += game.Rounds.Sum(r => r.SecondPlayerScore);
                     //add game to population
@@ -47,7 +46,7 @@ namespace PrisonersDilemma.Logic.Services
             return population;
         }
 
-        public Task<Population> GetNewPopulation(Population population)
+        public Population GetNewPopulation(Population population)//TODO: make sync
         {
             List<Player> newPlayersList = new List<Player>();
             int totalScore = population.Players.Sum(p => p.Score);
@@ -56,9 +55,9 @@ namespace PrisonersDilemma.Logic.Services
             foreach (KeyValuePair<string, int> strategyScore in scorePerStrategy)
             {
                 double percentPerStrategy = ((double)strategyScore.Value / (double)totalScore) * 100.0;
-                int newStrategyCount = (int)Math.Ceiling(population.Players.Count * (percentPerStrategy / 100));
+                int newStrategyCount = (int)Math.Floor(population.Players.Count * (percentPerStrategy / 100));
                 //if only 1 left make population consistent
-                if (newStrategyCount + 1 == population.Players.Count)
+                if (newStrategyCount + 1 == population.Players.Count)//TODO: probably should rethink this
                 {
                     newStrategyCount++;
                 }
@@ -66,18 +65,30 @@ namespace PrisonersDilemma.Logic.Services
                 Player playerToAdd = population.Players.Where(p => p.StrategyId == strategyScore.Key).FirstOrDefault();
                 for (int i = 0; i < newStrategyCount; i++)
                 {
-                    newPlayersList.Add(playerToAdd);
+                    Player newPlayer = new Player()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Score = playerToAdd.Score,//TODO: what if first player has highest or lowest score
+                        Strategy = playerToAdd.Strategy,
+                        StrategyId = playerToAdd.StrategyId,
+                        StrategyName = playerToAdd.StrategyName
+                    };
+                    newPlayersList.Add(newPlayer);
+                }
+                if (newPlayersList.Count > population.Players.Count)
+                {
+                    throw new IndexOutOfRangeException("Too much players");
                 }
                 if (newPlayersList.Count == population.Players.Count)
                 {
                     break;
                 }
             }
-
-            return Task.FromResult(new Population() { Players = newPlayersList });
+            
+            return new Population() { Players = newPlayersList };
         }
 
-        public Task<bool> IsPopulationConsistent(Population population)
+        public bool IsPopulationConsistent(Population population)
         {
             if (population == null)
             {
@@ -88,10 +99,10 @@ namespace PrisonersDilemma.Logic.Services
             {
                 if (player.StrategyId != firstStrategy)
                 {
-                    return Task.FromResult(false);
+                    return false;
                 }
             }
-            return Task.FromResult(true);
+            return true;
         }
 
         private Dictionary<string, int> GetScorePerStrategy(Population population)
