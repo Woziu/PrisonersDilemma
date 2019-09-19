@@ -7,14 +7,15 @@ namespace PrisonersDilemma.Tests.Integration
     {
         private readonly string _connectionString;
         private TestConnectionPrivider() { }
+
         public TestConnectionPrivider(string fileName)
         {
             using (StreamReader sr = new StreamReader(fileName))
             {
                 _connectionString = sr.ReadToEnd();
             }
-
         }
+
         public string GetConnectionString()
         {
             return _connectionString;

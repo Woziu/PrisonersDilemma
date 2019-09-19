@@ -15,7 +15,7 @@ namespace PrisonersDilemma.Tests.Integration.RepositoriesTests
     public class SimulationRepositoryTests
     {
         [TestInitialize]
-        public void GetConnectionString()
+        public void Init()
         {
             MongoTestConventions.RegisterConventions();
         }

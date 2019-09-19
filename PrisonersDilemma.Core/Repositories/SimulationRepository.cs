@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using PrisonersDilemma.Core.Helpers;
 using PrisonersDilemma.Core.Models;
+using System.Threading.Tasks;
 
 namespace PrisonersDilemma.Core.Repositories
 {
@@ -19,7 +16,7 @@ namespace PrisonersDilemma.Core.Repositories
             _simulations = database.GetCollection<Simulation>(connectionStringProvider.GetSimulationCollectionName());
         }
         public async Task<Simulation> GetAsync(string id) =>
-            await _simulations.AsQueryable().FirstOrDefaultAsync<Simulation>(s => s.Id == id);
+            await _simulations.AsQueryable().FirstOrDefaultAsync(s => s.Id == id);
 
         public async Task<string> SaveAsync(Simulation simulation)
         {

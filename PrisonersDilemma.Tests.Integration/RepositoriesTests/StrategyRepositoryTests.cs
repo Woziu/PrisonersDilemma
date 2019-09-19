@@ -13,7 +13,7 @@ namespace PrisonersDilemma.Tests.Integration.RepositoriesTests
     public class StrategyRepositoryTests
     {
         [TestInitialize]
-        public void GetConnectionString()
+        public void Init()
         {
             MongoTestConventions.RegisterConventions();
         }

@@ -12,6 +12,7 @@ namespace PrisonersDilemma.GUI
             {
                 new IgnoreExtraElementsConvention(true),
                 new EnumRepresentationConvention(BsonType.String),
+                //TODO: https://github.com/Lockbox-stack/Lockbox/tree/master/src/Lockbox.Api/MongoDb
                 new CamelCaseElementNameConvention()
             };
 

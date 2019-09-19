@@ -32,8 +32,15 @@ namespace PrisonersDilemma.Logic.Services
 
                 foreach (Move move in moves)
                 {
-                    if (move.Priority > maxPriority) move.Priority = maxPriority;
-                    if (move.Priority * move.TotalDepth > topPriority && MoveConditionsMet(player.Id, move, rounds))
+                    //limit move priority
+                    if (move.Priority > maxPriority)
+                    {
+                        move.Priority = maxPriority;
+                    }
+                    //calculate this move priority
+                    int thisMovePriority = move.Priority * move.TotalDepth;
+                    //check if move is possible
+                    if (thisMovePriority > topPriority && MoveConditionsMet(player.Id, move, rounds))
                     {
                         selectedMove = move.MoveType;
                         topPriority = move.Priority * move.TotalDepth;//higher depth higher priority
@@ -51,7 +58,7 @@ namespace PrisonersDilemma.Logic.Services
             }
             return new PlayerMove() { PlayerId = player.Id, Type = selectedMove };
         }
-        private bool MoveConditionsMet(string thisPlayerId, Move move, List<Round> roundsHistory)//conditions met or completed?/TODO: change to fulfilled?
+        private bool MoveConditionsMet(string thisPlayerId, Move move, List<Round> roundsHistory)
         {
             //TODO: this sould be tested
             if (move.Conditions == null) return true;
