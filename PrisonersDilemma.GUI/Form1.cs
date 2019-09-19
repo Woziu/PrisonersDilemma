@@ -31,17 +31,15 @@ namespace PrisonersDilemma.GUI
 
             public static void RegisterConventions()
             {
-                if (conventionsRegistred)
+                if (!conventionsRegistred)
                 {
-                    return;
-                }
-
-                ConventionRegistry.Register("CustomConventions", new MongoTestConventions(), x => true);
-                conventionsRegistred = true;
+                    ConventionRegistry.Register("CustomConventions", new MongoTestConventions(), x => true);
+                    conventionsRegistred = true;
+                }                
             }
         }
 
-        ConnectionStringProvider connectionStringProvider = new ConnectionStringProvider("connection.txt");
+        ConnectionStringProvider connectionStringProvider = new ConnectionStringProvider();
         public Dictionary<string, int> StrategiesPerSimulation { get; set; }
         List<Strategy> Strategies = new List<Strategy>();
         public Form1()
@@ -50,7 +48,6 @@ namespace PrisonersDilemma.GUI
             StrategiesPerSimulation = new Dictionary<string, int>();
 
             ConventionRegistry.Register("CustomConventions", new MongoTestConventions(), x => true);
-
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -70,12 +67,9 @@ namespace PrisonersDilemma.GUI
 
         private async void button1_Click(object sender, EventArgs e)
         {
-            //get strategies names from db
-            //clear listbox
+
             listBox1.Items.Clear();
-            AddLogLine("Updating strategies list...");
-            //add names
-            
+            AddLogLine("Updating strategies list...");            
             StrategyRepository repo = new StrategyRepository(connectionStringProvider);
             Strategies = await new StrategyService(repo).GetAllStrategies();
             //strategies.Add(new Strategy() { Name = "Simple Cooperator" });
@@ -158,8 +152,7 @@ namespace PrisonersDilemma.GUI
                 {
                     StrategiesPerSimulation.Add(selectedName, 1);
                     listBox2.Items.Add(selectedName + ": 1");
-                }
-                
+                }                
             }
         }
 
@@ -185,11 +178,8 @@ namespace PrisonersDilemma.GUI
             try
             {
                 Simulation sim = await simService.Run(players);
-                if (sim.Winner != null)
-                {
-                    MessageBox.Show($"{sim.Winner} : {sim.Winner.StrategyName}");
-                }
-                MessageBox.Show("No winner");
+                string message = sim.Winner != null ? $"{sim.Winner} : {sim.Winner.StrategyName}" : "No winner";
+                MessageBox.Show(message);
             }
             catch (Exception ex)
             {

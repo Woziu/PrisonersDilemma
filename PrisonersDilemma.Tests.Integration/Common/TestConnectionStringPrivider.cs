@@ -28,7 +28,7 @@ namespace PrisonersDilemma.Tests.Integration
             return "PrisonersDilemmaDev";
         }
 
-        public string GetSimulaionCollectionName()
+        public string GetSimulationCollectionName()
         {
             return "Simulations";
         }

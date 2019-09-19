@@ -18,7 +18,6 @@ namespace PrisonersDilemma.Logic.Services
         }
         public PlayerMove GetNextMove(Player player, List<Round> roundsHistory)
         {
-            //TODO: problably can be sync
             int maxPriority = 100;
             int topPriority = -1;
             MoveType selectedMove = MoveType.Undefined;

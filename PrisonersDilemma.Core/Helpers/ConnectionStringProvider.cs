@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Text;
 
@@ -7,32 +8,24 @@ namespace PrisonersDilemma.Core.Helpers
 {
     public class ConnectionStringProvider : IConnectionStringProvider
     {
-        private readonly string _connectionString;
-        public ConnectionStringProvider(string fileName)
-        {
-            using (StreamReader sr = new StreamReader(fileName))
-            {
-                _connectionString = sr.ReadToEnd();
-            }
-        }
         public string GetConnectionString()
         {
-            return _connectionString;
+            return ConfigurationManager.AppSettings["ConnectionString"];
         }
 
         public string GetDatabase()
         {
-            return "PrisonersDilemmaDev";
+            return ConfigurationManager.AppSettings["DatabaseName"];
         }
 
-        public string GetSimulaionCollectionName()
+        public string GetSimulationCollectionName()
         {
-            return "Simulations";
+            return ConfigurationManager.AppSettings["SimulationsCollection"];
         }
 
         public string GetStrategyCollectionName()
         {
-            return "Strategies"; 
+            return ConfigurationManager.AppSettings["StrategiesCollection"];
         }
     }
 }

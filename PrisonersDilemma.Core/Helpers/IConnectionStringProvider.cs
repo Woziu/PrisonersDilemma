@@ -9,6 +9,6 @@ namespace PrisonersDilemma.Core.Helpers
         string GetConnectionString();
         string GetDatabase();
         string GetStrategyCollectionName();
-        string GetSimulaionCollectionName();
+        string GetSimulationCollectionName();
     }
 }

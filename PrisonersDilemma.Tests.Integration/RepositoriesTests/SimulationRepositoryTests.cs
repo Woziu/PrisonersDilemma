@@ -41,7 +41,6 @@ namespace PrisonersDilemma.Tests.Integration.RepositoriesTests
         [TestMethod]
         public async Task Update_Simulation()
         {
-            //TODO: add GetAsync to test this
             var simulationRepository = new SimulationRepository(connection);
             var simulation = new Simulation()
             {

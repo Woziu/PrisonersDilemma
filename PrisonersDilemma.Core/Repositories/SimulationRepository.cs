@@ -16,7 +16,7 @@ namespace PrisonersDilemma.Core.Repositories
         {
             var client = new MongoClient(connectionStringProvider.GetConnectionString());
             var database = client.GetDatabase(connectionStringProvider.GetDatabase());
-            _simulations = database.GetCollection<Simulation>(connectionStringProvider.GetSimulaionCollectionName());
+            _simulations = database.GetCollection<Simulation>(connectionStringProvider.GetSimulationCollectionName());
         }
         public async Task<Simulation> GetAsync(string id) =>
             await _simulations.AsQueryable().FirstOrDefaultAsync<Simulation>(s => s.Id == id);

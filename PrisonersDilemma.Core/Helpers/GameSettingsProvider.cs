@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Text;
 using PrisonersDilemma.Core.Settings;
 
@@ -9,12 +10,26 @@ namespace PrisonersDilemma.Core.Helpers
     {
         public GameSettings GetGameSettings()
         {
-            //TODO: move to config
+            var configKeys = new List<string>() { "MoveModifier", "CooperateModifier", "TotalRounds" };
+            var configValues = new Dictionary<string, int>();
+
+            foreach(string key in configKeys)
+            {
+                try
+                {
+                    configValues[key] = Convert.ToInt32(ConfigurationManager.AppSettings[key]);
+                }
+                catch(Exception e)
+                {
+                    throw new FormatException($"Couldnt parse {key} value", e);
+                }
+            }
+
             return new GameSettings()
             {
-                MoveModifier = -1,                
-                CooperateModifier = 3,
-                TotalRounds = 10
+                MoveModifier = configValues["MoveModifier"],
+                CooperateModifier = configValues["CooperateModifier"],
+                TotalRounds = configValues["TotalRounds"],
             };            
         }
     }
