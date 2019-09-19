@@ -1,53 +1,31 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Conventions;
-using PrisonersDilemma.Core.Helpers;
-using PrisonersDilemma.Core.Models;
-using PrisonersDilemma.Core.Repositories;
+﻿using PrisonersDilemma.Core.Models;
 using PrisonersDilemma.Logic.Services;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PrisonersDilemma.GUI
 {
     public partial class Form1 : Form
     {
-        public class MongoTestConventions : IConventionPack
-        {
-            private static bool conventionsRegistred = false;
-            
-            public IEnumerable<IConvention> Conventions => new List<IConvention>()
-            {
-                new IgnoreExtraElementsConvention(true),
-                new EnumRepresentationConvention(BsonType.String),
-                new CamelCaseElementNameConvention()
-            };
+        private readonly ISimulationService _simulationService;
+        private readonly IStrategyService _strategyService;
 
-            public static void RegisterConventions()
-            {
-                if (!conventionsRegistred)
-                {
-                    ConventionRegistry.Register("CustomConventions", new MongoTestConventions(), x => true);
-                    conventionsRegistred = true;
-                }                
-            }
-        }
-
-        ConnectionStringProvider connectionStringProvider = new ConnectionStringProvider();
-        public Dictionary<string, int> StrategiesPerSimulation { get; set; }
-        List<Strategy> Strategies = new List<Strategy>();
-        public Form1()
+        private Dictionary<string, int> StrategiesPerSimulation { get; set; }
+        private List<Strategy> Strategies { get; set; }
+       
+        public Form1(ISimulationService simulationService, IStrategyService strategyService)
         {
             InitializeComponent();
-            StrategiesPerSimulation = new Dictionary<string, int>();
+            _simulationService = simulationService;
+            _strategyService = strategyService;
 
-            ConventionRegistry.Register("CustomConventions", new MongoTestConventions(), x => true);
+            StrategiesPerSimulation = new Dictionary<string, int>();
+            Strategies = new List<Strategy>();
+
+            
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -67,11 +45,9 @@ namespace PrisonersDilemma.GUI
 
         private async void button1_Click(object sender, EventArgs e)
         {
-
             listBox1.Items.Clear();
             AddLogLine("Updating strategies list...");            
-            StrategyRepository repo = new StrategyRepository(connectionStringProvider);
-            Strategies = await new StrategyService(repo).GetAllStrategies();
+            Strategies = await _strategyService.GetAllStrategies();
             //strategies.Add(new Strategy() { Name = "Simple Cooperator" });
             //strategies.Add(new Strategy() { Name = "Simple Cheater" });
             Strategies.ForEach(s => listBox1.Items.Add(s.Name));
@@ -167,18 +143,12 @@ namespace PrisonersDilemma.GUI
         }
 
         private async void button6_Click(object sender, EventArgs e)
-        {
-            var simRepo = new SimulationRepository(connectionStringProvider);
-            var gameSettings = new GameSettingsProvider();
-
-            var strategyService = new StrategyService(new StrategyRepository(connectionStringProvider));
-            var popService = new PopulationService(new GameService(strategyService, gameSettings));
-            SimulationService simService = new SimulationService(simRepo, popService, strategyService, new SimulationSettingsProvider());
-            List<Player> players = GetPlayersForSimulation();
+        {            
             try
             {
-                Simulation sim = await simService.Run(players);
-                string message = sim.Winner != null ? $"{sim.Winner} : {sim.Winner.StrategyName}" : "No winner";
+                List<Player> players = GetPlayersForSimulation();
+                Simulation sim = await _simulationService.Run(players);
+                string message = sim.Winner != null ? $"{sim.Winner.StrategyName} : {sim.Winner.Score}" : "No winner";
                 MessageBox.Show(message);
             }
             catch (Exception ex)
@@ -188,19 +158,32 @@ namespace PrisonersDilemma.GUI
         }
 
         private List<Player> GetPlayersForSimulation()
-        {
-            var list = new List<Player>();
-            foreach(var kvp in StrategiesPerSimulation)
+        {            
+            try
             {
-                string name = kvp.Key;
-                int strategiesCount = kvp.Value;
-                Strategy strategy = Strategies.Where(s => s.Name == name).FirstOrDefault();
-                for(int i = 0; i < strategiesCount; i++)
+                var list = new List<Player>();
+                foreach (var kvp in StrategiesPerSimulation)
                 {
-                    list.Add(new Player() { Id = Guid.NewGuid().ToString(), StrategyName = strategy.Name, StrategyId = strategy.Id });
+                    string name = kvp.Key;
+                    int strategiesCount = kvp.Value;
+                    Strategy strategy = Strategies.Where(s => s.Name == name).FirstOrDefault();
+                    for (int i = 0; i < strategiesCount; i++)
+                    {
+                        var player = new Player()
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            StrategyName = strategy.Name,
+                            StrategyId = strategy.Id
+                        };
+                        list.Add(player);
+                    }
                 }
             }
-            return list;
+            catch (Exception ex)
+            {
+                throw new Exception("Couldnt get players for simulation", ex);
+            }
+            return null;
         }
     }
 }
