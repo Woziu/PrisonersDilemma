@@ -15,7 +15,7 @@ namespace PrisonersDilemma.GUI
 
         private Dictionary<string, int> StrategiesPerSimulation { get; set; }
         private List<Strategy> Strategies { get; set; }
-       
+
         public Form1(ISimulationService simulationService, IStrategyService strategyService)
         {
             InitializeComponent();
@@ -25,7 +25,7 @@ namespace PrisonersDilemma.GUI
             StrategiesPerSimulation = new Dictionary<string, int>();
             Strategies = new List<Strategy>();
 
-            
+
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -46,7 +46,7 @@ namespace PrisonersDilemma.GUI
         private async void button1_Click(object sender, EventArgs e)
         {
             listBox1.Items.Clear();
-            AddLogLine("Updating strategies list...");            
+            AddLogLine("Updating strategies list...");
             Strategies = await _strategyService.GetAllStrategies();
             //strategies.Add(new Strategy() { Name = "Simple Cooperator" });
             //strategies.Add(new Strategy() { Name = "Simple Cheater" });
@@ -62,7 +62,7 @@ namespace PrisonersDilemma.GUI
         private void button3_Click(object sender, EventArgs e)
         {
             if (listBox2.Items.Count > 0 && listBox2.SelectedIndex >= 0)
-            {                
+            {
                 string selectedName = listBox2.Items[listBox2.SelectedIndex].ToString().Split(':')[0];//Simple Cooperator: 5
                 if (StrategiesPerSimulation[selectedName] > 1)
                 {
@@ -115,11 +115,11 @@ namespace PrisonersDilemma.GUI
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if(listBox1.Items.Count > 0 && listBox1.SelectedIndex >= 0)
+            if (listBox1.Items.Count > 0 && listBox1.SelectedIndex >= 0)
             {
                 string selectedName = listBox1.Items[listBox1.SelectedIndex].ToString();
                 if (StrategiesPerSimulation.ContainsKey(selectedName))
-                {                    
+                {
                     int currentIndex = listBox2.Items.IndexOf(GetNameAndCount(selectedName));
                     StrategiesPerSimulation[selectedName]++;
                     listBox2.Items[currentIndex] = GetNameAndCount(selectedName);
@@ -128,7 +128,7 @@ namespace PrisonersDilemma.GUI
                 {
                     StrategiesPerSimulation.Add(selectedName, 1);
                     listBox2.Items.Add(selectedName + ": 1");
-                }                
+                }
             }
         }
 
@@ -143,7 +143,7 @@ namespace PrisonersDilemma.GUI
         }
 
         private async void button6_Click(object sender, EventArgs e)
-        {            
+        {
             try
             {
                 List<Player> players = GetPlayersForSimulation();
@@ -158,10 +158,10 @@ namespace PrisonersDilemma.GUI
         }
 
         private List<Player> GetPlayersForSimulation()
-        {            
+        {
+            var list = new List<Player>();
             try
             {
-                var list = new List<Player>();
                 foreach (var kvp in StrategiesPerSimulation)
                 {
                     string name = kvp.Key;
@@ -183,7 +183,7 @@ namespace PrisonersDilemma.GUI
             {
                 throw new Exception("Couldnt get players for simulation", ex);
             }
-            return null;
+            return list;
         }
     }
 }

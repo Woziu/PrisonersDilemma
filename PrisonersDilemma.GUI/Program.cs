@@ -42,7 +42,7 @@ namespace PrisonersDilemma.GUI
             builder.RegisterType<SimulationService>().As<ISimulationService>();
 
             builder.RegisterType<Form1>().UsingConstructor(typeof(ISimulationService), typeof(IStrategyService));
-            
+
             return builder.Build();
         }
     }
