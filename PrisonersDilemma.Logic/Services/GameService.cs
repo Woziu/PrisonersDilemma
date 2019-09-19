@@ -19,14 +19,16 @@ namespace PrisonersDilemma.Logic.Services
             _strategyService = strategyService;
             _gameSettings = gameSettingsProvider.GetGameSettings();
         }
-        public async Task<Game> PlayAsync(Player firstPlayer, Player secondPlayer)
-        {            
+        public Game Play(Player firstPlayer, Player secondPlayer)
+        {
+            string playerId1 = firstPlayer.Id;
+            string playerId2 = secondPlayer.Id;
             var rounds = new List<Round>();
             for (int i = 1; i <= _gameSettings.TotalRounds; i++)
             {
                 //make moves                
-                PlayerMove firstPlayerMove = await _strategyService.GetNextMoveAsync(firstPlayer, rounds);
-                PlayerMove secondPlayerMove = await _strategyService.GetNextMoveAsync(secondPlayer, rounds);
+                PlayerMove firstPlayerMove = _strategyService.GetNextMove(firstPlayer, rounds);
+                PlayerMove secondPlayerMove = _strategyService.GetNextMove(secondPlayer, rounds);
                 //add moves to history
                 rounds.Add(GetRound(i, firstPlayerMove, secondPlayerMove));                
             }
@@ -42,26 +44,31 @@ namespace PrisonersDilemma.Logic.Services
         }
         public Round GetRound(int roundNumer, PlayerMove firstPlayerMove, PlayerMove secondPlayerMove)
         {
-            var round = new Round();
-            round.Id = roundNumer;
-            round.PlayersMoves = new List<PlayerMove>
+            try
             {
-                firstPlayerMove,
-                secondPlayerMove
-            };
+                var round = new Round
+                {
+                    Id = roundNumer,                    
+                    FirstPlayerScore = _gameSettings.MoveModifier,
+                    SecondPlayerScore = _gameSettings.MoveModifier,
+                    PlayersMoves = new List<PlayerMove>() { firstPlayerMove, secondPlayerMove }
+                };
 
-            round.FirstPlayerScore += _gameSettings.MoveModifier;
-            round.SecondPlayerScore += _gameSettings.MoveModifier;
+                if (firstPlayerMove.Type == MoveType.Cooperate)
+                {
+                    round.SecondPlayerScore += _gameSettings.CooperateModifier;
+                }
+                if (secondPlayerMove.Type == MoveType.Cooperate)
+                {
+                    round.FirstPlayerScore += _gameSettings.CooperateModifier;
+                }
 
-            if (firstPlayerMove.Type == MoveType.Cooperate)
-            {
-                round.SecondPlayerScore += _gameSettings.CooperateModifier;
+                return round;
             }
-            if (secondPlayerMove.Type == MoveType.Cooperate)
+            catch (Exception ex)
             {
-                round.FirstPlayerScore += _gameSettings.CooperateModifier;
+                return null;
             }
-            return round;
         }
     }
 }

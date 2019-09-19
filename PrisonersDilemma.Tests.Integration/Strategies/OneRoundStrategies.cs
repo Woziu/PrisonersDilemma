@@ -1,8 +1,6 @@
 ﻿using PrisonersDilemma.Core.Enums;
 using PrisonersDilemma.Core.Models;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PrisonersDilemma.Tests.Integration.Strategies
 {

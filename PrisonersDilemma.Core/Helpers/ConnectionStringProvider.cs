@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Text;
 
 namespace PrisonersDilemma.Core.Helpers
@@ -8,23 +10,22 @@ namespace PrisonersDilemma.Core.Helpers
     {
         public string GetConnectionString()
         {
-            return "";
-            throw new NotImplementedException();
+            return ConfigurationManager.AppSettings["ConnectionString"];
         }
 
         public string GetDatabase()
         {
-            throw new NotImplementedException();
+            return ConfigurationManager.AppSettings["DatabaseName"];
         }
 
-        public string GetSimulaionCollectionName()
+        public string GetSimulationCollectionName()
         {
-            throw new NotImplementedException();
+            return ConfigurationManager.AppSettings["SimulationsCollection"];
         }
 
         public string GetStrategyCollectionName()
         {
-            throw new NotImplementedException();
+            return ConfigurationManager.AppSettings["StrategiesCollection"];
         }
     }
 }

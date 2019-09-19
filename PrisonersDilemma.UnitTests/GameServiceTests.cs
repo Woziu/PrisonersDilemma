@@ -21,22 +21,22 @@ namespace PrisonersDilemma.UnitTests//TODO:Rename project to PrisonersDilemma.Te
         private readonly int TotalRounds = 10;
 
         [TestMethod]
-        public async Task Max_Score_When_Cooperate()
+        public void Max_Score_When_Cooperate()
         {                    
             GameService gameService = GetBasicMockedCoopStrategyServices();
 
-            Game game = await gameService.PlayAsync(new Player(), new Player());
+            Game game = gameService.Play(new Player(), new Player());
 
             int firstPlayerTotalScore = game.Rounds.Sum(s => s.FirstPlayerScore);
             Assert.AreEqual((TotalRounds * MoveModifier + TotalRounds * CooperateModifier), firstPlayerTotalScore);
         }
 
         [TestMethod]
-        public async Task Equal_Score_When_Cooperate()
+        public void Equal_Score_When_Cooperate()
         {
             GameService gameService = GetBasicMockedCoopStrategyServices();
 
-            Game game = await gameService.PlayAsync(new Player(), new Player());
+            Game game = gameService.Play(new Player(), new Player());
 
             int firstPlayerTotalScore = game.Rounds.Sum(s => s.FirstPlayerScore);
             int secondPlayerTotalScoure = game.Rounds.Sum(s => s.SecondPlayerScore);           
@@ -44,11 +44,11 @@ namespace PrisonersDilemma.UnitTests//TODO:Rename project to PrisonersDilemma.Te
         }
 
         [TestMethod]
-        public async Task Equal_Score_When_Cheat()
+        public void Equal_Score_When_Cheat()
         {
             GameService gameService = GetBasicMockedCheatStrategyServices();
 
-            Game game = await gameService.PlayAsync(new Player(), new Player());
+            Game game = gameService.Play(new Player(), new Player());
 
             int firstPlayerTotalScore = game.Rounds.Sum(s => s.FirstPlayerScore);
             int secondPlayerTotalScoure = game.Rounds.Sum(s => s.SecondPlayerScore);
@@ -60,8 +60,8 @@ namespace PrisonersDilemma.UnitTests//TODO:Rename project to PrisonersDilemma.Te
             var strategyMock = new Mock<IStrategyService>();
             var gameSettingsMock = new Mock<IGameSettingsProvider>();
 
-            strategyMock.Setup(x => x.GetNextMoveAsync(It.IsAny<Player>(), It.IsAny<List<Round>>()))
-                .Returns((Player p, List<Round> r) => (Task.FromResult(new PlayerMove() { PlayerId = p.Id, Type = MoveType.Cooperate })));
+            strategyMock.Setup(x => x.GetNextMove(It.IsAny<Player>(), It.IsAny<List<Round>>()))
+                .Returns((Player p, List<Round> r) => (new PlayerMove() { PlayerId = p.Id, Type = MoveType.Cooperate }));
 
             gameSettingsMock.Setup(x => x.GetGameSettings()).Returns(GetTestSettings());
 
@@ -73,8 +73,8 @@ namespace PrisonersDilemma.UnitTests//TODO:Rename project to PrisonersDilemma.Te
             var strategyMock = new Mock<IStrategyService>();
             var gameSettingsMock = new Mock<IGameSettingsProvider>();
 
-            strategyMock.Setup(x => x.GetNextMoveAsync(It.IsAny<Player>(), It.IsAny<List<Round>>()))
-                .Returns((Player p, List<Round> r) => (Task.FromResult(new PlayerMove() { PlayerId = p.Id, Type = MoveType.Cheat })));
+            strategyMock.Setup(x => x.GetNextMove(It.IsAny<Player>(), It.IsAny<List<Round>>()))
+                .Returns((Player p, List<Round> r) => new PlayerMove() { PlayerId = p.Id, Type = MoveType.Cheat });
 
             gameSettingsMock.Setup(x => x.GetGameSettings()).Returns(GetTestSettings());
 

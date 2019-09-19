@@ -37,62 +37,62 @@ namespace PrisonersDilemma.UnitTests
         }
 
         [TestMethod]
-        public async Task Always_Cooparate()
+        public void Always_Cooparate()
         {
             var repositoryMock = new Mock<IStrategyRepository>();
             StrategyService strategyService = new StrategyService(repositoryMock.Object);
             Player player = BasicPlayers.GetCoopPlayer();
 
-            PlayerMove move = await strategyService.GetNextMoveAsync(player, GetCoopHistory(player.Id, Guid.NewGuid().ToString()));
+            PlayerMove move = strategyService.GetNextMove(player, GetCoopHistory(player.Id, Guid.NewGuid().ToString()));
             Assert.AreEqual(MoveType.Cooperate, move.Type);
         }
 
         [TestMethod]
-        public async Task Always_Cheat()
+        public void Always_Cheat()
         {
             var repositoryMock = new Mock<IStrategyRepository>();
             StrategyService strategyService = new StrategyService(repositoryMock.Object);
             Player player = BasicPlayers.GetCheaterPlayer();
 
-            PlayerMove move = await strategyService.GetNextMoveAsync(player, GetCoopHistory(player.Id, Guid.NewGuid().ToString()));
+            PlayerMove move = strategyService.GetNextMove(player, GetCoopHistory(player.Id, Guid.NewGuid().ToString()));
             Assert.AreEqual(MoveType.Cheat, move.Type);
         }
 
         [TestMethod]
-        public async Task Copycat_Should_Cheat()
+        public void Copycat_Should_Cheat()
         {
             var repositoryMock = new Mock<IStrategyRepository>();
             StrategyService strategyService = new StrategyService(repositoryMock.Object);
             Player player = BasicPlayers.GetCopycatPlayer();
 
-            PlayerMove move = await strategyService.GetNextMoveAsync(player, GetCoopHistory(player.Id, Guid.NewGuid().ToString()));
+            PlayerMove move = strategyService.GetNextMove(player, GetCoopHistory(player.Id, Guid.NewGuid().ToString()));
             Assert.AreEqual(MoveType.Cheat, move.Type);
         }
 
         [TestMethod]
-        public async Task Copycat_Should_Cooperate()
+        public void Copycat_Should_Cooperate()
         {
             var repositoryMock = new Mock<IStrategyRepository>();
             StrategyService strategyService = new StrategyService(repositoryMock.Object);
             Player player = BasicPlayers.GetCheaterPlayer();
 
-            PlayerMove move = await strategyService.GetNextMoveAsync(player, GetCoopHistory(player.Id, Guid.NewGuid().ToString()));
+            PlayerMove move = strategyService.GetNextMove(player, GetCoopHistory(player.Id, Guid.NewGuid().ToString()));
             Assert.AreEqual(MoveType.Cheat, move.Type);
         }
 
         [TestMethod]
-        public async Task Should_Cheat_Vs_Cooperator()
+        public void Should_Cheat_Vs_Cooperator()
         {
             var repositoryMock = new Mock<IStrategyRepository>();
             StrategyService strategyService = new StrategyService(repositoryMock.Object);
             Player player = ConditionalPlayers.GetCheaterVsCooperator();
 
-            PlayerMove move = await strategyService.GetNextMoveAsync(player, GetCoopHistory(Guid.NewGuid().ToString(), player.Id));
+            PlayerMove move = strategyService.GetNextMove(player, GetCoopHistory(Guid.NewGuid().ToString(), player.Id));
             Assert.AreEqual(MoveType.Cheat, move.Type);
         }
 
         [TestMethod]
-        public async Task Should_Coop_Vs_Cheater()
+        public void Should_Coop_Vs_Cheater()
         {
             var repositoryMock = new Mock<IStrategyRepository>();
             StrategyService strategyService = new StrategyService(repositoryMock.Object);
@@ -109,13 +109,13 @@ namespace PrisonersDilemma.UnitTests
                 new Round() { PlayersMoves = moves },
             };
 
-            PlayerMove move = await strategyService.GetNextMoveAsync(player, rounds);
+            PlayerMove move = strategyService.GetNextMove(player, rounds);
 
             Assert.AreEqual(MoveType.Cooperate, move.Type);
         }
 
         [TestMethod]
-        public async Task Should_Cheat_Vs_Cheater()
+        public void Should_Cheat_Vs_Cheater()
         {
             var repositoryMock = new Mock<IStrategyRepository>();
             StrategyService strategyService = new StrategyService(repositoryMock.Object);
@@ -133,7 +133,7 @@ namespace PrisonersDilemma.UnitTests
                 new Round() { PlayersMoves = moves },
             };
 
-            PlayerMove move = await strategyService.GetNextMoveAsync(player, rounds);
+            PlayerMove move = strategyService.GetNextMove(player, rounds);
 
             Assert.AreEqual(MoveType.Cheat, move.Type);
         }        

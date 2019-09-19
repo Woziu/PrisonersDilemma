@@ -1,32 +1,27 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrisonersDilemma.Core.Helpers;
+﻿using Autofac;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrisonersDilemma.Core.Models;
 using PrisonersDilemma.Core.Repositories;
+using PrisonersDilemma.Tests.Integration.Common;
 using PrisonersDilemma.Tests.Integration.Strategies;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace PrisonersDilemma.Tests.Integration
+namespace PrisonersDilemma.Tests.Integration.RepositoriesTests
 {
     [TestClass]
     public class StrategyRepositoryTests
     {
-        IConnectionStringProvider connection;
         [TestInitialize]
-        public void GetConnectionString()
+        public void Init()
         {
-            if (connection == null)
-            {
-                MongoTestConventions.RegisterConventions();
-                connection = new TestConnectionPrivider("connection.txt");
-            }
+            MongoTestConventions.RegisterConventions();
         }
+
         [TestMethod]
         public async Task Get_Null_When_No_Strategy()
         {
-            var strategyRepository = new StrategyRepository(connection);
+            var strategyRepository = TestContainer.BuildContainer().Resolve<IStrategyRepository>();
             Strategy strategy = await strategyRepository.GetAsync((string)null);
             Assert.IsNull(strategy);
         }
@@ -34,14 +29,11 @@ namespace PrisonersDilemma.Tests.Integration
         [TestMethod]
         public async Task Get_Added_Strategy_Name()
         {
-            var strategyRepository = new StrategyRepository(connection);
+            var strategyRepository = TestContainer.BuildContainer().Resolve<IStrategyRepository>();
             Strategy strategy = new Strategy()
             {
                 Name = "CooperateTest",
-                Moves = new List<Move>()
-                {
-                    new Move() { MoveType = Core.Enums.MoveType.Cooperate}
-                }
+                Moves = new List<Move>() { new Move() { MoveType = Core.Enums.MoveType.Cooperate } }
             };
 
             string id = await strategyRepository.AddAsync(strategy);
@@ -53,7 +45,7 @@ namespace PrisonersDilemma.Tests.Integration
         public async Task PopulateDb()
         {
             //TODO: remove when GUI created
-            var strategyRepository = new StrategyRepository(connection);
+            var strategyRepository = TestContainer.BuildContainer().Resolve<IStrategyRepository>();
 
             var strategies = new List<Strategy>()
             {

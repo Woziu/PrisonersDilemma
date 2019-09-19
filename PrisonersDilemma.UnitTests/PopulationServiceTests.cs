@@ -19,7 +19,7 @@ namespace PrisonersDilemma.UnitTests
     public class PopulationServiceTests
     {
         [TestMethod]
-        public async Task Scores_Are_Correct_After_Evaluation()
+        public void Scores_Are_Correct_After_Evaluation()
         {
             var gameServiceMock = new Mock<IGameService>();
 
@@ -29,8 +29,8 @@ namespace PrisonersDilemma.UnitTests
                 rounds.Add(new Round() { FirstPlayerScore = 2, SecondPlayerScore = -1 });
             }
 
-            gameServiceMock.Setup(g => g.PlayAsync(It.IsAny<Player>(), It.IsAny<Player>()))
-                .Returns(Task.FromResult(new Game() { Rounds = rounds }));
+            gameServiceMock.Setup(g => g.Play(It.IsAny<Player>(), It.IsAny<Player>()))
+                .Returns(new Game() { Rounds = rounds });
 
             var populationService = new PopulationService(gameServiceMock.Object);
 
@@ -43,7 +43,7 @@ namespace PrisonersDilemma.UnitTests
                 Id = Guid.NewGuid().ToString()
             };
 
-            Population population = await populationService.Evaluate(new List<Player>() { firstPlayer, secondPlayer });
+            Population population = populationService.Evaluate(new List<Player>() { firstPlayer, secondPlayer });
 
             Player newFirstPlayer = population.Players.Where(p => p.Id == firstPlayer.Id).FirstOrDefault();
             Player newSecondPlayer = population.Players.Where(p => p.Id == secondPlayer.Id).FirstOrDefault();
@@ -53,7 +53,7 @@ namespace PrisonersDilemma.UnitTests
         }
 
         [TestMethod]
-        public async Task Population_Is_Consistent()
+        public void Population_Is_Consistent()
         {
             var gameServiceMock = new Mock<IGameService>();
 
@@ -65,12 +65,12 @@ namespace PrisonersDilemma.UnitTests
                 players.Add(new Player() { StrategyId = "1" });
             }
             
-            bool isConsistent = await populationService.IsPopulationConsistent(new Population() { Players = players });        
+            bool isConsistent = populationService.IsPopulationConsistent(new Population() { Players = players });        
             Assert.IsTrue(isConsistent); 
         }
 
         [TestMethod]
-        public async Task Population_Is_Not_Consistent()
+        public void Population_Is_Not_Consistent()
         {
             var gameServiceMock = new Mock<IGameService>();
 
@@ -83,12 +83,12 @@ namespace PrisonersDilemma.UnitTests
             }
             players.Add(new Player() { StrategyId = "2" });            
 
-            bool isConsistent = await populationService.IsPopulationConsistent(new Population() { Players = players });
+            bool isConsistent = populationService.IsPopulationConsistent(new Population() { Players = players });
             Assert.IsFalse(isConsistent);
         }
 
         [TestMethod]
-        public async Task New_Population_Is_Consistent()
+        public void New_Population_Is_Consistent()
         {
             var gameServiceMock = new Mock<IGameService>();
 
@@ -100,13 +100,13 @@ namespace PrisonersDilemma.UnitTests
                 players.Add(new Player() { StrategyId = "1", Score = 21 });
             }
             players.Add(new Player() { StrategyId = "2", Score = 20 });
-            Population population = await populationService.GetNewPopulation(new Population() { Players = players });
-            bool isConsistent = await populationService.IsPopulationConsistent(population);
+            Population population = populationService.GetNewPopulation(new Population() { Players = players });
+            bool isConsistent = populationService.IsPopulationConsistent(population);
             Assert.IsTrue(isConsistent);
         }
 
         [TestMethod]
-        public async Task New_Population_Players_Count_Did_Not_Change()
+        public void New_Population_Players_Count_Did_Not_Change()
         {
             var gameServiceMock = new Mock<IGameService>();
 
@@ -119,9 +119,9 @@ namespace PrisonersDilemma.UnitTests
             }
             players.Add(new Player() { StrategyId = "2", Score = 20 });
             
-            Population population = await populationService.GetNewPopulation(new Population() { Players = players });
+            Population population = populationService.GetNewPopulation(new Population() { Players = players });
 
-            bool isConsistent = await populationService.IsPopulationConsistent(population);
+            bool isConsistent = populationService.IsPopulationConsistent(population);
             Assert.IsTrue(isConsistent);
             Assert.AreEqual(players.Count, population.Players.Count);            
         }      

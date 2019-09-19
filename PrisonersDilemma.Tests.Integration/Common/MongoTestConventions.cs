@@ -19,13 +19,11 @@ namespace PrisonersDilemma.Tests.Integration
 
         public static void RegisterConventions()
         {
-            if (conventionsRegistred)
+            if (!conventionsRegistred)
             {
-                return;
+                ConventionRegistry.Register("CustomConventions", new MongoTestConventions(), x => true);
+                conventionsRegistred = true;
             }
-
-            ConventionRegistry.Register("CustomConventions", new MongoTestConventions(), x => true);
-            conventionsRegistred = true;
         }
     }
 }

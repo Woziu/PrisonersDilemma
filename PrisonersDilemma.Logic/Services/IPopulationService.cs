@@ -8,9 +8,8 @@ namespace PrisonersDilemma.Logic.Services
 {
     public interface IPopulationService
     {
-        Task<Population> Evaluate(List<Player> players);
-        Task<Population> GetNewPopulation(Population population);
-        Task<bool> IsPopulationConsistent(Population population);
-        //Task SavePopulationAsync(string simulationId, Population population);
+        Population Evaluate(List<Player> players);
+        Population GetNewPopulation(Population population);
+        bool IsPopulationConsistent(Population population);        
     }
 }

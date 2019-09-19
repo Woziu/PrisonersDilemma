@@ -1,8 +1,5 @@
 ﻿using PrisonersDilemma.Core.Helpers;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace PrisonersDilemma.Tests.Integration
 {
@@ -10,14 +7,15 @@ namespace PrisonersDilemma.Tests.Integration
     {
         private readonly string _connectionString;
         private TestConnectionPrivider() { }
+
         public TestConnectionPrivider(string fileName)
         {
             using (StreamReader sr = new StreamReader(fileName))
             {
                 _connectionString = sr.ReadToEnd();
             }
-
         }
+
         public string GetConnectionString()
         {
             return _connectionString;
@@ -28,7 +26,7 @@ namespace PrisonersDilemma.Tests.Integration
             return "PrisonersDilemmaDev";
         }
 
-        public string GetSimulaionCollectionName()
+        public string GetSimulationCollectionName()
         {
             return "Simulations";
         }

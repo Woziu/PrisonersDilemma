@@ -1,7 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Autofac;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrisonersDilemma.Core.Helpers;
 using PrisonersDilemma.Core.Models;
 using PrisonersDilemma.Core.Repositories;
+using PrisonersDilemma.Tests.Integration.Common;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,21 +14,16 @@ namespace PrisonersDilemma.Tests.Integration.RepositoriesTests
     [TestClass]
     public class SimulationRepositoryTests
     {
-        IConnectionStringProvider connection;
         [TestInitialize]
-        public void GetConnectionString()
+        public void Init()
         {
-            if (connection == null)
-            {
-                MongoTestConventions.RegisterConventions();
-                connection = new TestConnectionPrivider("connection.txt");
-            }
+            MongoTestConventions.RegisterConventions();
         }
 
         [TestMethod]
         public async Task Get_New_Simulation_Id()
         {
-            var simulationRepository = new SimulationRepository(connection);
+            var simulationRepository = TestContainer.BuildContainer().Resolve<ISimulationRepository>();
             var simulation = new Simulation()
             {
                 StartDate = DateTime.Now,
@@ -41,8 +38,7 @@ namespace PrisonersDilemma.Tests.Integration.RepositoriesTests
         [TestMethod]
         public async Task Update_Simulation()
         {
-            //TODO: add GetAsync to test this
-            var simulationRepository = new SimulationRepository(connection);
+            var simulationRepository = TestContainer.BuildContainer().Resolve<ISimulationRepository>();
             var simulation = new Simulation()
             {
                 StartDate = DateTime.Now,

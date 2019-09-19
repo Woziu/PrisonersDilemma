@@ -16,36 +16,49 @@ namespace PrisonersDilemma.Logic.Services
         {
             _strategyRepository = strategyRepository;
         }
-        public Task<PlayerMove> GetNextMoveAsync(Player player, List<Round> roundsHistory)
+        public PlayerMove GetNextMove(Player player, List<Round> roundsHistory)
         {
-            //TODO: problably can be sync
             int maxPriority = 100;
             int topPriority = -1;
             MoveType selectedMove = MoveType.Undefined;
 
-            var rounds = roundsHistory.OrderByDescending(r => r.Id).ToList();
-            
-            var moves = player.Strategy.Moves
-                .Where(c => c.TotalDepth <= roundsHistory.Count)
-                .OrderByDescending(d => d.TotalDepth);//moves with highest depth have highest prioryty
-
-            foreach(Move move in moves)
+            try
             {
-                if (move.Priority > maxPriority) move.Priority = maxPriority;
-                if (move.Priority * move.TotalDepth > topPriority && MoveConditionsMet(player.Id, move, rounds))
+                var rounds = roundsHistory.OrderByDescending(r => r.Id).ToList();
+
+                var moves = player.Strategy.Moves
+                    .Where(c => c.TotalDepth <= roundsHistory.Count)
+                    .OrderByDescending(d => d.TotalDepth);//moves with highest depth have highest prioryty
+
+                foreach (Move move in moves)
                 {
-                    selectedMove = move.MoveType;
-                    topPriority = move.Priority * move.TotalDepth;//higher depth higher priority
+                    //limit move priority
+                    if (move.Priority > maxPriority)
+                    {
+                        move.Priority = maxPriority;
+                    }
+                    //calculate this move priority
+                    int thisMovePriority = move.Priority * move.TotalDepth;
+                    //check if move is possible
+                    if (thisMovePriority > topPriority && MoveConditionsMet(player.Id, move, rounds))
+                    {
+                        selectedMove = move.MoveType;
+                        topPriority = move.Priority * move.TotalDepth;//higher depth higher priority
+                    }
+                }
+                if (selectedMove == MoveType.Undefined)
+                {
+                    //TODO: throw or log?
+                    selectedMove = MoveType.Cooperate;
                 }
             }
-            if (selectedMove == MoveType.Undefined)
+            catch (Exception ex)
             {
-                //TODO: throw or log?
-                selectedMove = MoveType.Cooperate;
+
             }
-            return Task.FromResult(new PlayerMove() { PlayerId = player.Id, Type = selectedMove });            
+            return new PlayerMove() { PlayerId = player.Id, Type = selectedMove };
         }
-        private bool MoveConditionsMet(string thisPlayerId, Move move, List<Round> roundsHistory)//conditions met or completed?
+        private bool MoveConditionsMet(string thisPlayerId, Move move, List<Round> roundsHistory)
         {
             //TODO: this sould be tested
             if (move.Conditions == null) return true;
@@ -54,38 +67,45 @@ namespace PrisonersDilemma.Logic.Services
 
             foreach (Condition condition in move.Conditions)
             {
-                if (roundsHistory.Count > condition.Depth)
+                try
                 {
-                    //check if self condition defined and ok
-                    if (condition.PlayerMove != MoveType.Undefined)
+                    if (roundsHistory.Count > condition.Depth)
                     {
-                        MoveType playerMove = roundsHistory[condition.Depth - 1].PlayersMoves
-                            .Where(p => p.PlayerId == thisPlayerId).FirstOrDefault().Type;
-                        if (condition.PlayerMove != playerMove)
+                        //check if self condition defined and ok
+                        if (condition.PlayerMove != MoveType.Undefined)
                         {
-                            if (move.ConditionsOperator == ConditionOperator.AND) return false;                            
-                            ok = false;
+                            MoveType playerMove = roundsHistory[condition.Depth - 1].PlayersMoves
+                                .Where(p => p.PlayerId == thisPlayerId).FirstOrDefault().Type;
+                            if (condition.PlayerMove != playerMove)
+                            {
+                                if (move.ConditionsOperator == ConditionOperator.AND) return false;
+                                ok = false;
+                            }
+                        }
+                        //check if enemy condition defined and ok
+                        if (condition.EnemyMove != MoveType.Undefined)
+                        {
+                            MoveType enemyMove = roundsHistory[condition.Depth - 1].PlayersMoves
+                                .Where(p => p.PlayerId != thisPlayerId).FirstOrDefault().Type;
+                            if (condition.EnemyMove != enemyMove)
+                            {
+                                if (move.ConditionsOperator == ConditionOperator.AND) return false;
+                                ok = false;
+                            }
                         }
                     }
-                    //check if enemy condition defined and ok
-                    if (condition.EnemyMove != MoveType.Undefined)
-                    {
-                        MoveType enemyMove = roundsHistory[condition.Depth - 1].PlayersMoves
-                            .Where(p => p.PlayerId != thisPlayerId).FirstOrDefault().Type;
-                        if (condition.EnemyMove != enemyMove)
-                        {
-                            if (move.ConditionsOperator == ConditionOperator.AND) return false;
-                            ok = false;
-                        }
-                    }
-                }                
+                }
+                catch (Exception ex)
+                {
+
+                }             
             }
             return ok;
         }
 
-        public List<Strategy> GetStrategiesById(List<string> idList)
+        public async Task<List<Strategy>> GetStrategiesById(List<string> idList)
         {
-            List<Strategy> strategies = _strategyRepository.Get(idList);
+            List<Strategy> strategies = await _strategyRepository.GetAsync(idList);
             //check if strategie are complete
             if (strategies != null && strategies.Any())
             {

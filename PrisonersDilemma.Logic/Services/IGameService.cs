@@ -8,6 +8,6 @@ namespace PrisonersDilemma.Logic.Services
 {
     public interface IGameService
     {        
-        Task<Game> PlayAsync(Player firstPlayer, Player secondPlayer);
+        Game Play(Player firstPlayer, Player secondPlayer);
     }
 }
