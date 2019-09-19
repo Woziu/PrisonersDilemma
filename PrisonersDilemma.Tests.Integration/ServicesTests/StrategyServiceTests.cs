@@ -25,7 +25,7 @@ namespace PrisonersDilemma.Tests.Integration.ServicesTests
             }
         }
         [TestMethod]
-        public async Task Get_Strategies_By_Id_Count_Equal_All_Strategies()
+        public void Get_Strategies_By_Id_Count_Equal_All_Strategies()
         {
             var strategyRepository = new StrategyRepository(connection);
             var strategyService = new StrategyService(strategyRepository);

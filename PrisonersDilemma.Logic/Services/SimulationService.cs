@@ -51,7 +51,7 @@ namespace PrisonersDilemma.Logic.Services
                 //evaluate players in current population
                 Population population = await _populationService.Evaluate(players);
                 //check if consistent
-                isPopulationConsistent = await _populationService.IsPopulationConsistent(population);
+                isPopulationConsistent = _populationService.IsPopulationConsistent(population);
 
                 population.IsConsistent = isPopulationConsistent;
                 simulation.Populations.Add(population);
@@ -64,7 +64,7 @@ namespace PrisonersDilemma.Logic.Services
                 else
                 {
                     //get players for next population
-                    Population newPopulation = await _populationService.GetNewPopulation(population);
+                    Population newPopulation = _populationService.GetNewPopulation(population);
                     players = newPopulation.Players;
                 }                
             }

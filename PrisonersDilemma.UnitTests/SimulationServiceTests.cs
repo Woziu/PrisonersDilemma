@@ -29,7 +29,7 @@ namespace PrisonersDilemma.UnitTests
             populationServiceMock.Setup(x => x.Evaluate(It.IsAny<List<Player>>()))
                 .Returns((List<Player> p) => Task.FromResult(new Population() { Players = p }));
             populationServiceMock.Setup(x => x.IsPopulationConsistent(It.IsAny<Population>()))
-                .Returns(Task.FromResult(true));
+                .Returns(true);
 
             strategyServiceMock.Setup(x => x.GetStrategiesById(It.IsAny<List<string>>()))
                 .Returns(new List<Strategy>() { GetCoopStrategy(strategyId) });
@@ -52,7 +52,7 @@ namespace PrisonersDilemma.UnitTests
         }
 
         [TestMethod]
-        public async Task Get_Players_Strategies()
+        public void Get_Players_Strategies()
         {
             var players = new List<Player>();
             var strategies = new List<Strategy>();
@@ -69,16 +69,14 @@ namespace PrisonersDilemma.UnitTests
             var settingsProviderMock = new Mock<ISimulationSettingsProvider>();
 
             populationServiceMock.Setup(x => x.IsPopulationConsistent(It.IsAny<Population>()))
-                .Returns(Task.FromResult(true));
+                .Returns(true);
 
             strategyServiceMock.Setup(x => x.GetStrategiesById(It.IsAny<List<string>>()))
                 .Returns(strategies);
 
             settingsProviderMock.Setup(x => x.GetSimulationSettings())
                 .Returns(new SimulationSettings() { PoplationsLimit = 10 });
-
             
-
             SimulationService simulationService = new SimulationService(simulationRepositoryMock.Object,
                 populationServiceMock.Object, strategyServiceMock.Object, settingsProviderMock.Object);
 
@@ -106,7 +104,7 @@ namespace PrisonersDilemma.UnitTests
             populationServiceMock.Setup(x => x.Evaluate(It.IsAny<List<Player>>()))
                 .Returns((List<Player> p) => Task.FromResult(new Population() { Players = p }));
             populationServiceMock.Setup(x => x.IsPopulationConsistent(It.IsAny<Population>()))
-                .Returns(Task.FromResult(true));
+                .Returns(true);
 
             strategyServiceMock.Setup(x => x.GetStrategiesById(It.IsAny<List<string>>()))
                 .Returns(new List<Strategy>() { GetCoopStrategy(strategyId) });
@@ -132,13 +130,13 @@ namespace PrisonersDilemma.UnitTests
             var settingsProviderMock = new Mock<ISimulationSettingsProvider>();
 
             populationServiceMock.Setup(x => x.IsPopulationConsistent(It.IsAny<Population>()))
-                .Returns(Task.FromResult(false));
+                .Returns(false);
 
             populationServiceMock.Setup(x => x.Evaluate(It.IsAny<List<Player>>()))
                 .Returns((List<Player> p) => Task.FromResult(new Population() { Players = p }));
 
             populationServiceMock.Setup(x => x.GetNewPopulation(It.IsAny<Population>()))
-                .Returns((Population p) => Task.FromResult(new Population() { Players = p.Players }));
+                .Returns((Population p) => new Population() { Players = p.Players });
 
             strategyServiceMock.Setup(x => x.GetStrategiesById(It.IsAny<List<string>>()))
                 .Returns(new List<Strategy>() { GetCoopStrategy(strategyId) });
@@ -161,7 +159,7 @@ namespace PrisonersDilemma.UnitTests
         }
 
         [TestMethod]
-        public async Task Throw_Exception_When_No_Players()
+        public void Throw_Exception_When_No_Players()
         {
             var simulationRepositoryMock = new Mock<ISimulationRepository>();            
             var strategyServiceMonk = new Mock<IStrategyService>();
@@ -183,10 +181,7 @@ namespace PrisonersDilemma.UnitTests
                 Name = "Simple Cooprerator",
                 Moves = new List<Move>()
                 {
-                    new Move()
-                    {
-                        MoveType = MoveType.Cooperate
-                    }
+                    new Move() { MoveType = MoveType.Cooperate }
                 }
             };
 
