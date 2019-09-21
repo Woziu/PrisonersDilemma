@@ -54,6 +54,8 @@ namespace PrisonersDilemma.Logic.Services
                 isPopulationConsistent = _populationService.IsPopulationConsistent(population);
 
                 population.IsConsistent = isPopulationConsistent;
+                population.ScorePerStrategy = _populationService.GetScorePerStrategy(population);
+                //add population to simulation
                 simulation.Populations.Add(population);
 
                 if (isPopulationConsistent)

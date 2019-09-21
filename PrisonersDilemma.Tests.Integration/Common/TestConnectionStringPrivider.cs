@@ -23,17 +23,17 @@ namespace PrisonersDilemma.Tests.Integration
 
         public string GetDatabase()
         {
-            return "PrisonersDilemmaDev";
+            return "PrisonersDilemmaTests";
         }
 
         public string GetSimulationCollectionName()
         {
-            return "Simulations";
+            return "SimulationsTests";
         }
 
         public string GetStrategyCollectionName()
         {
-            return "Strategies";
+            return "StrategiesTests";
         }
     }
 }

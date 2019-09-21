@@ -1,10 +1,7 @@
-﻿using System;
+﻿using PrisonersDilemma.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PrisonersDilemma.Core.Models;
-using PrisonersDilemma.Core.Repositories;
 
 namespace PrisonersDilemma.Logic.Services
 {
@@ -16,7 +13,7 @@ namespace PrisonersDilemma.Logic.Services
         {
             _gameService = gameService;
         }
-        
+
         public Population Evaluate(List<Player> players)
         {
             Population population = new Population()
@@ -39,9 +36,9 @@ namespace PrisonersDilemma.Logic.Services
                     //add game to population
                     population.Games.Add(game);
                 }
-            }           
+            }
             //add new players to population
-            population.Players = players;            
+            population.Players = players;
             return population;
         }
 
@@ -61,18 +58,27 @@ namespace PrisonersDilemma.Logic.Services
                     newStrategyCount++;
                 }
                 //add first player with giver strategy to list               
-                Player playerToAdd = population.Players.Where(p => p.StrategyId == strategyScore.Key).FirstOrDefault();
+                Player playerToAdd = population.Players
+                    .Where(p => String.Equals(p.StrategyName, strategyScore.Key))
+                    .FirstOrDefault();
                 for (int i = 0; i < newStrategyCount; i++)
                 {
-                    Player newPlayer = new Player()
+                    try
                     {
-                        Id = Guid.NewGuid().ToString(),
-                        Score = playerToAdd.Score,//TODO: what if first player has highest or lowest score
-                        Strategy = playerToAdd.Strategy,
-                        StrategyId = playerToAdd.StrategyId,
-                        StrategyName = playerToAdd.StrategyName
-                    };
-                    newPlayersList.Add(newPlayer);
+                        Player newPlayer = new Player()
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            Score = playerToAdd.Score,
+                            Strategy = playerToAdd.Strategy,
+                            StrategyId = playerToAdd.StrategyId,
+                            StrategyName = playerToAdd.StrategyName
+                        };
+                        newPlayersList.Add(newPlayer);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 if (newPlayersList.Count > population.Players.Count)
                 {
@@ -83,7 +89,7 @@ namespace PrisonersDilemma.Logic.Services
                     break;
                 }
             }
-            
+
             return new Population() { Players = newPlayersList };
         }
 
@@ -104,20 +110,27 @@ namespace PrisonersDilemma.Logic.Services
             return true;
         }
 
-        private Dictionary<string, int> GetScorePerStrategy(Population population)
-        {           
+        public Dictionary<string, int> GetScorePerStrategy(Population population)
+        {
             Dictionary<string, int> scorePerStrategy = new Dictionary<string, int>();
             //sum score of each strategy
-            foreach (Player player in population.Players)
+            try
             {
-                if (scorePerStrategy.ContainsKey(player.StrategyId))
+                foreach (Player player in population.Players)
                 {
-                    scorePerStrategy[player.StrategyId] += player.Score;
+                    if (scorePerStrategy.ContainsKey(player.StrategyName))
+                    {
+                        scorePerStrategy[player.StrategyName] += player.Score;
+                    }
+                    else
+                    {
+                        scorePerStrategy.Add(player.StrategyName, player.Score);
+                    }
                 }
-                else
-                {
-                    scorePerStrategy.Add(player.StrategyId, player.Score);
-                }
+            }
+            catch (Exception ex)
+            {
+
             }
             return scorePerStrategy;
         }

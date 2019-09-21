@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using PrisonersDilemma.Core.Enums;
+﻿using PrisonersDilemma.Core.Enums;
 using PrisonersDilemma.Core.Helpers;
 using PrisonersDilemma.Core.Models;
-using PrisonersDilemma.Core.Repositories;
 using PrisonersDilemma.Core.Settings;
+using System;
+using System.Collections.Generic;
 
 namespace PrisonersDilemma.Logic.Services
 {
@@ -30,14 +27,14 @@ namespace PrisonersDilemma.Logic.Services
                 PlayerMove firstPlayerMove = _strategyService.GetNextMove(firstPlayer, rounds);
                 PlayerMove secondPlayerMove = _strategyService.GetNextMove(secondPlayer, rounds);
                 //add moves to history
-                rounds.Add(GetRound(i, firstPlayerMove, secondPlayerMove));                
+                rounds.Add(GetRound(i, firstPlayerMove, secondPlayerMove));
             }
             var game = new Game
             {
                 Id = Guid.NewGuid().ToString(),
                 FirstPlayer = firstPlayer,
                 SecondPlayer = secondPlayer,
-                Rounds = rounds                
+                Rounds = rounds
             };
 
             return game;
@@ -48,7 +45,7 @@ namespace PrisonersDilemma.Logic.Services
             {
                 var round = new Round
                 {
-                    Id = roundNumer,                    
+                    Id = roundNumer,
                     FirstPlayerScore = _gameSettings.MoveModifier,
                     SecondPlayerScore = _gameSettings.MoveModifier,
                     PlayersMoves = new List<PlayerMove>() { firstPlayerMove, secondPlayerMove }

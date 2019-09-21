@@ -1,8 +1,5 @@
 ﻿using PrisonersDilemma.Core.Models;
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PrisonersDilemma.Logic.Services
 {
@@ -10,6 +7,7 @@ namespace PrisonersDilemma.Logic.Services
     {
         Population Evaluate(List<Player> players);
         Population GetNewPopulation(Population population);
-        bool IsPopulationConsistent(Population population);        
+        bool IsPopulationConsistent(Population population);
+        Dictionary<string, int> GetScorePerStrategy(Population population);
     }
 }

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PrisonersDilemma.Core.Enums;
+﻿using PrisonersDilemma.Core.Enums;
 using PrisonersDilemma.Core.Models;
 using PrisonersDilemma.Core.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PrisonersDilemma.Logic.Services
 {
@@ -98,7 +97,7 @@ namespace PrisonersDilemma.Logic.Services
                 catch (Exception ex)
                 {
 
-                }             
+                }
             }
             return ok;
         }
@@ -125,15 +124,15 @@ namespace PrisonersDilemma.Logic.Services
                                 strategies[i].Moves[j].Priority = strategies[i].Moves[j].TotalDepth;
                             }
                         }
-                    }                    
+                    }
                 }
             }
             return strategies;
         }
 
         public async Task<List<Strategy>> GetAllStrategies() =>
-             await _strategyRepository.GetAll();   
-        
+             await _strategyRepository.GetAll();
+
         public async Task<Strategy> GetStrategyByName(string name)
         {
             List<Strategy> allStrategies = await _strategyRepository.GetAll();
