@@ -13,10 +13,11 @@ namespace PrisonersDilemma.Core.Models
         public string Id { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime FinishDate { get; set; }
+        public int MutationsCount { get; set; }
         public int PopulationsLimit { get; set; }
         public int PopulationsCompleated { get; set; }
         public List<Player> EntryPlayers { get; set; }
         public Player Winner { get; set; }
-        public List<Population> Populations { get; set; }
+        public List<Population> Populations { get; set; }        
     }
 }

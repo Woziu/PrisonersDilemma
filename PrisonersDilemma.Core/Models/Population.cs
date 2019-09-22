@@ -11,5 +11,7 @@ namespace PrisonersDilemma.Core.Models
         public List<Player> Players { get; set; }
         public bool IsConsistent { get; set; }
         public Dictionary<string, int> ScorePerStrategy { get; set; }
+        [BsonIgnore]
+        public int MutationsCount { get; set; }
     }
 }

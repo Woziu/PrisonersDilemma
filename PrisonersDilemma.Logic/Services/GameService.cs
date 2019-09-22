@@ -21,14 +21,16 @@ namespace PrisonersDilemma.Logic.Services
             string playerId1 = firstPlayer.Id;
             string playerId2 = secondPlayer.Id;
             var rounds = new List<Round>();
+
             for (int i = 1; i <= _gameSettings.TotalRounds; i++)
             {
                 //make moves                
                 PlayerMove firstPlayerMove = _strategyService.GetNextMove(firstPlayer, rounds);
                 PlayerMove secondPlayerMove = _strategyService.GetNextMove(secondPlayer, rounds);
                 //add moves to history
-                rounds.Add(GetRound(i, firstPlayerMove, secondPlayerMove));
+                rounds.Add(GetRoundScores(i, firstPlayerMove, secondPlayerMove));
             }
+
             var game = new Game
             {
                 Id = Guid.NewGuid().ToString(),
@@ -39,7 +41,7 @@ namespace PrisonersDilemma.Logic.Services
 
             return game;
         }
-        public Round GetRound(int roundNumer, PlayerMove firstPlayerMove, PlayerMove secondPlayerMove)
+        public Round GetRoundScores(int roundNumer, PlayerMove firstPlayerMove, PlayerMove secondPlayerMove)
         {
             try
             {
@@ -50,8 +52,7 @@ namespace PrisonersDilemma.Logic.Services
                     SecondPlayerScore = 0,
                     PlayersMoves = new List<PlayerMove>() { firstPlayerMove, secondPlayerMove }
                 };
-
-
+                //calculate players scores
                 if (firstPlayerMove.Type == secondPlayerMove.Type)
                 {
                     MoveType move = firstPlayerMove.Type;

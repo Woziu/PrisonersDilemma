@@ -48,28 +48,45 @@ namespace PrisonersDilemma.Logic.Services
             int totalScore = population.Players.Sum(p => p.Score);
             Dictionary<string, int> scorePerStrategy = GetScorePerStrategy(population);
 
+            int minScore = scorePerStrategy.Values.Min();
+            string bestStrategyName = scorePerStrategy
+                .Where(s => s.Value == scorePerStrategy.Values.Max())
+                .FirstOrDefault().Key;
+
+            Player mutatedPlayer = population.Players
+                    .Where(p => String.Equals(p.StrategyName, bestStrategyName))
+                    .FirstOrDefault();
+
+            int mutationsCount = 0;
+
             foreach (KeyValuePair<string, int> strategyScore in scorePerStrategy)
             {
                 double percentPerStrategy = ((double)strategyScore.Value / (double)totalScore) * 100.0;
-                int newStrategyCount = (int)Math.Floor(population.Players.Count * (percentPerStrategy / 100));
+                int newStrategyCount = (int)Math.Ceiling(population.Players.Count * (percentPerStrategy / 100));
 
-                //TODO: add mutations
+                bool canMutate = strategyScore.Value == minScore ? true : false;
 
-                //if only 1 left make population consistent
-                if (newStrategyCount + 1 == population.Players.Count)//TODO: probably should rethink this
-                {
-                    newStrategyCount++;
-                }
                 //add first player with giver strategy to list               
-                Player playerToAdd = population.Players
+                Player playerWithCurrentStrategy = population.Players
                     .Where(p => String.Equals(p.StrategyName, strategyScore.Key))
                     .FirstOrDefault();
+                Player playerToAdd = playerWithCurrentStrategy;
 
+                var randomNumer = new Random();
 
                 for (int i = 0; i < newStrategyCount; i++)
                 {
+                    if (newPlayersList.Count + 1 > population.Players.Count)
+                    {
+                        break;
+                    }
                     try
                     {
+                        if (canMutate && randomNumer.Next(99) == 33)
+                        {
+                            playerToAdd = mutatedPlayer;
+                            mutationsCount++;
+                        }
                         Player newPlayer = new Player()
                         {
                             Id = Guid.NewGuid().ToString(),
@@ -79,23 +96,16 @@ namespace PrisonersDilemma.Logic.Services
                             StrategyName = playerToAdd.StrategyName
                         };
                         newPlayersList.Add(newPlayer);
+                        playerToAdd = playerWithCurrentStrategy;
                     }
                     catch (Exception ex)
                     {
 
                     }
                 }
-                if (newPlayersList.Count > population.Players.Count)
-                {
-                    throw new IndexOutOfRangeException("Too much players");
-                }
-                if (newPlayersList.Count == population.Players.Count)
-                {
-                    break;
-                }
-            }
-
-            return new Population() { Players = newPlayersList };
+                
+            }            
+            return new Population() { Players = newPlayersList, MutationsCount = mutationsCount };
         }
 
         public bool IsPopulationConsistent(Population population)

@@ -5,7 +5,6 @@ using PrisonersDilemma.Core.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PrisonersDilemma.Logic.Services
@@ -13,11 +12,11 @@ namespace PrisonersDilemma.Logic.Services
     public class SimulationService : ISimulationService
     {
         private readonly ISimulationRepository _simulationRepository;
-        private readonly IPopulationService _populationService;        
+        private readonly IPopulationService _populationService;
         private readonly IStrategyService _strategyService;
         private readonly SimulationSettings _simulationSettings;
-               
-        public SimulationService(ISimulationRepository simulationRepository, IPopulationService populationService, 
+
+        public SimulationService(ISimulationRepository simulationRepository, IPopulationService populationService,
             IStrategyService strategyService, ISimulationSettingsProvider simulationSettingsProdiver)
         {
             _populationService = populationService;
@@ -31,7 +30,7 @@ namespace PrisonersDilemma.Logic.Services
             {
                 throw new ArgumentNullException("No players supplied");
             }
-            int currentPopulation = 0;            
+            int currentPopulation = 0;
             bool isPopulationConsistent = false;
 
             Simulation simulation = new Simulation()
@@ -51,16 +50,15 @@ namespace PrisonersDilemma.Logic.Services
                 //evaluate players in current population
                 Population population = _populationService.Evaluate(players);
                 //check if consistent
-                isPopulationConsistent = _populationService.IsPopulationConsistent(population);
-
-                population.IsConsistent = isPopulationConsistent;
+                population.IsConsistent = _populationService.IsPopulationConsistent(population);
                 population.ScorePerStrategy = _populationService.GetScorePerStrategy(population);
                 //add population to simulation
                 simulation.Populations.Add(population);
 
-                if (isPopulationConsistent)
+                if (population.IsConsistent)
                 {
                     players = population.Players;
+                    isPopulationConsistent = true;
                     break;
                 }
                 else
@@ -68,14 +66,15 @@ namespace PrisonersDilemma.Logic.Services
                     //get players for next population
                     Population newPopulation = _populationService.GetNewPopulation(population);
                     players = newPopulation.Players;
-                }                
+                }
             }
             while (currentPopulation < _simulationSettings.PoplationsLimit);
 
+            //save simulation
             simulation.FinishDate = DateTime.Now;
             simulation.PopulationsCompleated = currentPopulation;
             simulation.Winner = isPopulationConsistent ? players.FirstOrDefault() : null;
-
+            simulation.MutationsCount = simulation.Populations.Sum(p => p.MutationsCount);
             await _simulationRepository.UpdateAsync(simulation);
 
             return simulation;
