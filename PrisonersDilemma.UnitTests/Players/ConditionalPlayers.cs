@@ -2,7 +2,6 @@
 using PrisonersDilemma.Core.Models;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PrisonersDilemma.UnitTests.Players
 {

@@ -2,7 +2,6 @@
 using PrisonersDilemma.Core.Models;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PrisonersDilemma.UnitTests.Players
 {
@@ -70,7 +69,7 @@ namespace PrisonersDilemma.UnitTests.Players
                         MoveType = MoveType.Cooperate
                     },
                     new Move()
-                    {         
+                    {
                         TotalDepth = 1,
                         Conditions = new List<Condition>()
                         {

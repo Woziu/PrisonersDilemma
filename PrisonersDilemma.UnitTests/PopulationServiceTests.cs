@@ -1,16 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using PrisonersDilemma.Core.Enums;
-using PrisonersDilemma.Core.Helpers;
 using PrisonersDilemma.Core.Models;
-using PrisonersDilemma.Core.Repositories;
-using PrisonersDilemma.Core.Settings;
 using PrisonersDilemma.Logic.Services;
-using PrisonersDilemma.UnitTests.Players;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 
 namespace PrisonersDilemma.UnitTests
@@ -64,9 +58,9 @@ namespace PrisonersDilemma.UnitTests
             {
                 players.Add(new Player() { StrategyId = "1" });
             }
-            
-            bool isConsistent = populationService.IsPopulationConsistent(new Population() { Players = players });        
-            Assert.IsTrue(isConsistent); 
+
+            bool isConsistent = populationService.IsPopulationConsistent(new Population() { Players = players });
+            Assert.IsTrue(isConsistent);
         }
 
         [TestMethod]
@@ -81,7 +75,7 @@ namespace PrisonersDilemma.UnitTests
             {
                 players.Add(new Player() { StrategyId = "1" });
             }
-            players.Add(new Player() { StrategyId = "2" });            
+            players.Add(new Player() { StrategyId = "2" });
 
             bool isConsistent = populationService.IsPopulationConsistent(new Population() { Players = players });
             Assert.IsFalse(isConsistent);
@@ -97,9 +91,9 @@ namespace PrisonersDilemma.UnitTests
             var players = new List<Player>();
             for (int i = 0; i < 9; i++)
             {
-                players.Add(new Player() { StrategyId = "1", Score = 21 });
+                players.Add(new Player() { StrategyName = "a", StrategyId = "1", Score = 21 });
             }
-            players.Add(new Player() { StrategyId = "2", Score = 20 });
+            players.Add(new Player() { StrategyName = "b", StrategyId = "2", Score = 20 });
             Population population = populationService.GetNewPopulation(new Population() { Players = players });
             bool isConsistent = populationService.IsPopulationConsistent(population);
             Assert.IsTrue(isConsistent);
@@ -115,15 +109,15 @@ namespace PrisonersDilemma.UnitTests
             var players = new List<Player>();
             for (int i = 0; i < 9; i++)
             {
-                players.Add(new Player() { StrategyId = "1", Score = 21 });
+                players.Add(new Player() { StrategyName = "a", StrategyId = "1", Score = 21 });
             }
-            players.Add(new Player() { StrategyId = "2", Score = 20 });
-            
+            players.Add(new Player() { StrategyName = "b", StrategyId = "2", Score = 20 });
+
             Population population = populationService.GetNewPopulation(new Population() { Players = players });
 
             bool isConsistent = populationService.IsPopulationConsistent(population);
             Assert.IsTrue(isConsistent);
-            Assert.AreEqual(players.Count, population.Players.Count);            
-        }      
+            Assert.AreEqual(players.Count, population.Players.Count);
+        }
     }
 }

@@ -6,10 +6,8 @@ using PrisonersDilemma.Core.Models;
 using PrisonersDilemma.Core.Repositories;
 using PrisonersDilemma.Core.Settings;
 using PrisonersDilemma.Logic.Services;
-using PrisonersDilemma.UnitTests.Players;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace PrisonersDilemma.UnitTests
@@ -47,7 +45,7 @@ namespace PrisonersDilemma.UnitTests
                 populationServiceMock.Object, strategyServiceMock.Object, settingsProviderMock.Object);
 
             Simulation simulation = await simulationService.Run(players);
-            
+
             Assert.AreEqual(1, simulation.PopulationsCompleated);
         }
 
@@ -76,15 +74,15 @@ namespace PrisonersDilemma.UnitTests
 
             settingsProviderMock.Setup(x => x.GetSimulationSettings())
                 .Returns(new SimulationSettings() { PoplationsLimit = 10 });
-            
+
             SimulationService simulationService = new SimulationService(simulationRepositoryMock.Object,
                 populationServiceMock.Object, strategyServiceMock.Object, settingsProviderMock.Object);
 
             List<Player> newPlayers = await simulationService.GetPlayersStrategies(players);
 
-            strategyServiceMock.Verify(x => x.GetStrategiesById(It.IsAny<List<string>>()), Times.Exactly(1));            
+            strategyServiceMock.Verify(x => x.GetStrategiesById(It.IsAny<List<string>>()), Times.Exactly(1));
             //no assert required since Verify throws exception if fails
-        }        
+        }
 
         [TestMethod]
         public async Task Consistent_Strategy_Wins()
@@ -110,7 +108,7 @@ namespace PrisonersDilemma.UnitTests
                 .Returns(Task.FromResult(new List<Strategy>() { GetCoopStrategy(strategyId) }));
 
             settingsProviderMock.Setup(x => x.GetSimulationSettings())
-                .Returns(new SimulationSettings() { PoplationsLimit = 10 });           
+                .Returns(new SimulationSettings() { PoplationsLimit = 10 });
 
             SimulationService simulationService = new SimulationService(simulationRepositoryMock.Object,
                 populationServiceMock.Object, strategyServiceMock.Object, settingsProviderMock.Object);
@@ -155,13 +153,13 @@ namespace PrisonersDilemma.UnitTests
 
             Simulation simulation = await simulationService.Run(players);
 
-            Assert.IsNull(simulation.Winner);            
+            Assert.IsNull(simulation.Winner);
         }
 
         [TestMethod]
         public void Throw_Exception_When_No_Players()
         {
-            var simulationRepositoryMock = new Mock<ISimulationRepository>();            
+            var simulationRepositoryMock = new Mock<ISimulationRepository>();
             var strategyServiceMonk = new Mock<IStrategyService>();
             var populationServiceMock = new Mock<IPopulationService>();
             var settingsProviderMock = new Mock<ISimulationSettingsProvider>();
@@ -169,7 +167,7 @@ namespace PrisonersDilemma.UnitTests
             SimulationService simulationService = new SimulationService(simulationRepositoryMock.Object,
                 populationServiceMock.Object, strategyServiceMonk.Object, settingsProviderMock.Object);
 
-            var ex = Assert.ThrowsExceptionAsync<ArgumentNullException>( () => simulationService.Run(new List<Player>()));
+            var ex = Assert.ThrowsExceptionAsync<ArgumentNullException>(() => simulationService.Run(new List<Player>()));
             Assert.IsNotNull(ex);
         }
 

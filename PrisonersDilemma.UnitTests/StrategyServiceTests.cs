@@ -1,16 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PrisonersDilemma.Core.Enums;
-using PrisonersDilemma.Core.Helpers;
 using PrisonersDilemma.Core.Models;
 using PrisonersDilemma.Core.Repositories;
-using PrisonersDilemma.Core.Settings;
 using PrisonersDilemma.Logic.Services;
 using PrisonersDilemma.UnitTests.Players;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 
 namespace PrisonersDilemma.UnitTests
@@ -136,6 +132,6 @@ namespace PrisonersDilemma.UnitTests
             PlayerMove move = strategyService.GetNextMove(player, rounds);
 
             Assert.AreEqual(MoveType.Cheat, move.Type);
-        }        
+        }
     }
 }

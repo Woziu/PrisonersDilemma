@@ -46,18 +46,29 @@ namespace PrisonersDilemma.Logic.Services
                 var round = new Round
                 {
                     Id = roundNumer,
-                    FirstPlayerScore = _gameSettings.MoveModifier,
-                    SecondPlayerScore = _gameSettings.MoveModifier,
+                    FirstPlayerScore = 0,
+                    SecondPlayerScore = 0,
                     PlayersMoves = new List<PlayerMove>() { firstPlayerMove, secondPlayerMove }
                 };
 
-                if (firstPlayerMove.Type == MoveType.Cooperate)
+
+                if (firstPlayerMove.Type == secondPlayerMove.Type)
                 {
-                    round.SecondPlayerScore += _gameSettings.CooperateModifier;
+                    MoveType move = firstPlayerMove.Type;
+                    int score = move == MoveType.Cooperate ? 3 : 1;
+                    round.FirstPlayerScore += score;
+                    round.SecondPlayerScore += score;
                 }
-                if (secondPlayerMove.Type == MoveType.Cooperate)
+                else
                 {
-                    round.FirstPlayerScore += _gameSettings.CooperateModifier;
+                    if (firstPlayerMove.Type == MoveType.Cooperate)
+                    {
+                        round.SecondPlayerScore += 5;
+                    }
+                    if (secondPlayerMove.Type == MoveType.Cooperate)
+                    {
+                        round.FirstPlayerScore += 5;
+                    }
                 }
 
                 return round;

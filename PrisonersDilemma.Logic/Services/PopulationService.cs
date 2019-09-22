@@ -52,6 +52,9 @@ namespace PrisonersDilemma.Logic.Services
             {
                 double percentPerStrategy = ((double)strategyScore.Value / (double)totalScore) * 100.0;
                 int newStrategyCount = (int)Math.Floor(population.Players.Count * (percentPerStrategy / 100));
+
+                //TODO: add mutations
+
                 //if only 1 left make population consistent
                 if (newStrategyCount + 1 == population.Players.Count)//TODO: probably should rethink this
                 {
@@ -61,6 +64,8 @@ namespace PrisonersDilemma.Logic.Services
                 Player playerToAdd = population.Players
                     .Where(p => String.Equals(p.StrategyName, strategyScore.Key))
                     .FirstOrDefault();
+
+
                 for (int i = 0; i < newStrategyCount; i++)
                 {
                     try
