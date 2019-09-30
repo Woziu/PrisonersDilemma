@@ -1,10 +1,12 @@
 ﻿using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrisonersDilemma.Core.Helpers;
+using PrisonersDilemma.Core.Enums;
 using PrisonersDilemma.Core.Models;
 using PrisonersDilemma.Core.Repositories;
 using PrisonersDilemma.Logic.Services;
 using PrisonersDilemma.Tests.Integration.Common;
+using PrisonersDilemma.Tests.Integration.Strategies;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -55,6 +57,81 @@ namespace PrisonersDilemma.Tests.Integration.ServicesTests
 
             var strategies = await strategyService.GetStrategiesById(players.Select(p => p.StrategyId).ToList());
             Assert.AreEqual(2, strategies.Count);
+        }
+
+
+        [TestMethod]
+        public void GoodStrategy_Cheat_In_First_Move()
+        {
+            Player goodPlayer = GetGoodPlayer();
+
+            PlayerMove move = strategyService.GetNextMove(goodPlayer, new List<Round>());
+
+            Assert.AreEqual(MoveType.Cheat, move.Type);
+        }
+        [TestMethod]
+        public void GoodStrategy_Cheat_In_Second_Move()
+        {
+            Player goodPlayer = GetGoodPlayer();
+            var rounds = new List<Round>()
+            {
+                new Round()
+                {
+                    Id = 1,
+                    PlayersMoves = new List<PlayerMove>()
+                    {
+                        new PlayerMove() { PlayerId = goodPlayer.Id, Type = MoveType.Cheat },
+                        new PlayerMove() { PlayerId = "other player", Type = MoveType.Cooperate }
+                    }
+                }
+            };
+
+            PlayerMove move = strategyService.GetNextMove(goodPlayer, rounds);
+
+            Assert.AreEqual(MoveType.Cheat, move.Type);
+        }
+        [TestMethod]
+        public void GoodStrategy_Cooperate_In_Third_Move()
+        {
+            Player goodPlayer = GetGoodPlayer();
+            var rounds = new List<Round>()
+            {
+                new Round()
+                {
+                    Id = 1,
+                    PlayersMoves = new List<PlayerMove>()
+                    {
+                        new PlayerMove() { PlayerId = goodPlayer.Id, Type = MoveType.Cheat },
+                        new PlayerMove() { PlayerId = "other player", Type = MoveType.Cooperate }
+                    }
+                },
+                new Round()
+                {
+                    Id = 2,
+                    PlayersMoves = new List<PlayerMove>()
+                    {
+                        new PlayerMove() { PlayerId = goodPlayer.Id, Type = MoveType.Cheat },
+                        new PlayerMove() { PlayerId = "other player", Type = MoveType.Cooperate }
+                    }
+                }
+            };
+
+            PlayerMove move = strategyService.GetNextMove(goodPlayer, rounds);
+
+            Assert.AreEqual(MoveType.Cooperate, move.Type);
+        }
+
+        private Player GetGoodPlayer()
+        {
+            Strategy goodStrategy = TwoRoundStrategies.GetGoodStrategy();
+            return new Player()
+            {
+                StrategyName = goodStrategy.Name,
+                StrategyId = goodStrategy.Id,
+                Strategy = goodStrategy,
+                Id = Guid.NewGuid().ToString()
+            };
+
         }
     }
 }

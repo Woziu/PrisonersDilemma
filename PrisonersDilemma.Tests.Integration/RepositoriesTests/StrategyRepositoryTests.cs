@@ -54,7 +54,8 @@ namespace PrisonersDilemma.Tests.Integration.RepositoriesTests
                 OneRoundStrategies.GetCopycat(),
                 OneRoundStrategies.GetCheaterCopycat(),
                 OneRoundStrategies.GetReverser(),
-                OneRoundStrategies.GetCheaterReverser()
+                OneRoundStrategies.GetCheaterReverser(),
+                TwoRoundStrategies.GetGoodStrategy()
             };
 
             var newStrategies = new List<string>();
