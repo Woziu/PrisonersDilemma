@@ -60,7 +60,7 @@ namespace PrisonersDilemma.Tests.Integration.Strategies
                                 EnemyMove = MoveType.Cooperate
                             }
                         },
-                        MoveType = MoveType.Cheat
+                        MoveType = MoveType.Cooperate
                     },
                     //Depth 2
                     new Move()

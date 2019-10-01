@@ -71,6 +71,10 @@ namespace PrisonersDilemma.Tests.Integration.ServicesTests
         [TestMethod]
         public async Task Winner_Score_Is_Total_Score()
         {
+            IGameSettingsProvider gameSettingsProvider = TestContainer.BuildContainer().Resolve<IGameSettingsProvider>();
+            GameSettings gameSettings = gameSettingsProvider.GetGameSettings();
+            int bothCooperate = 3;
+
             Strategy cooperator = await strategyRepository
                 .GetByNameAsync(NoMemoryStrategies.GetSimpleCooperator().Name);
 
@@ -79,16 +83,9 @@ namespace PrisonersDilemma.Tests.Integration.ServicesTests
             {
                 players.Add(new Player() { StrategyId = cooperator.Id });
             }
-
             Simulation simulation = await simulationService.Run(players);
 
-            var gameSettingsProvider = TestContainer.BuildContainer().Resolve<IGameSettingsProvider>();
-
-            GameSettings gameSettings = gameSettingsProvider.GetGameSettings();
-            int totalScore = gameSettings.TotalRounds
-                * (gameSettings.CooperateModifier + gameSettings.MoveModifier)
-                * (players.Count - 1);
-
+            int totalScore = gameSettings.TotalRounds * bothCooperate * (players.Count - 1);
             Assert.AreEqual(totalScore, simulation.Winner.Score);
         }
 

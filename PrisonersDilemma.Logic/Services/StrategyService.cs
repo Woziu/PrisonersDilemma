@@ -68,7 +68,7 @@ namespace PrisonersDilemma.Logic.Services
             {
                 try
                 {
-                    if (roundsHistory.Count > condition.Depth)
+                    if (roundsHistory.Count >= condition.Depth)
                     {
                         //check if self condition defined and ok
                         if (condition.PlayerMove != MoveType.Undefined)
@@ -92,6 +92,10 @@ namespace PrisonersDilemma.Logic.Services
                                 ok = false;
                             }
                         }
+                    }
+                    else
+                    {
+                        ok = false;
                     }
                 }
                 catch (Exception ex)

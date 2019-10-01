@@ -32,6 +32,7 @@ namespace PrisonersDilemma.Tests.Integration.Strategies
                     },
                     new Move()
                     {
+                        TotalDepth = 1,
                         Conditions = new List<Condition>()
                         {
                             new Condition()
@@ -73,6 +74,7 @@ namespace PrisonersDilemma.Tests.Integration.Strategies
                     },
                     new Move()
                     {
+                        TotalDepth = 1,
                         Conditions = new List<Condition>()
                         {
                             new Condition()

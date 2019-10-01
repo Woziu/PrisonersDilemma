@@ -22,7 +22,7 @@ namespace PrisonersDilemma.Tests.Integration.Common
                 builder.RegisterType<SimulationRepository>().As<ISimulationRepository>();
                 builder.RegisterType<StrategyRepository>().As<IStrategyRepository>();
 
-                builder.RegisterType<GameSettingsProvider>().As<IGameSettingsProvider>();
+                builder.RegisterType<TestGameSettingsProvider>().As<IGameSettingsProvider>();
                 builder.RegisterType<SimulationSettingsProvider>().As<ISimulationSettingsProvider>();
 
                 builder.RegisterType<StrategyService>().As<IStrategyService>();

@@ -18,8 +18,15 @@ namespace PrisonersDilemma.Logic.Services
         }
         public Game Play(Player firstPlayer, Player secondPlayer)
         {
-            string playerId1 = firstPlayer.Id;
-            string playerId2 = secondPlayer.Id;
+            if (firstPlayer == null && secondPlayer == null)
+            {
+                throw new ArgumentNullException("Not enough players supplied");
+            }
+            if (_gameSettings.TotalRounds <= 0)
+            {
+                throw new ArgumentException("Not even 1 round to play");
+            }
+
             var rounds = new List<Round>();
 
             for (int i = 1; i <= _gameSettings.TotalRounds; i++)
