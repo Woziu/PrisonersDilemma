@@ -26,9 +26,10 @@ namespace PrisonersDilemma.Core.Repositories
             await _strategies.AsQueryable().ToListAsync();
         public async Task<Strategy> GetAsync(string id) =>
             await _strategies.AsQueryable().FirstOrDefaultAsync(s => s.Id == id);
+        //TODO: FIX THIS
         public async Task<List<Strategy>> GetAsync(List<string> idList) =>
-            await _strategies.AsQueryable().Where(s => idList.Contains(s.Id)).ToListAsync();
+            await _strategies.FindSync<Strategy>(s => idList.Contains(s.Id)).ToListAsync();//TODO:FIX                                                                                           
         public async Task<Strategy> GetByNameAsync(string strategyName) =>
-            await _strategies.AsQueryable().FirstOrDefaultAsync(s => s.Name == strategyName);//TODO:removable - only for testing
+            await _strategies.FindSync<Strategy>(s => s.Name == strategyName).FirstOrDefaultAsync();
     }
 }

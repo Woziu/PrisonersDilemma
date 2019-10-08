@@ -31,6 +31,7 @@ namespace PrisonersDilemma.Logic.Services
                 throw new ArgumentNullException("No players supplied");
             }
             int currentPopulation = 0;
+            int mutationsCount = 0;
             bool isPopulationConsistent = false;
 
             Simulation simulation = new Simulation()
@@ -65,6 +66,7 @@ namespace PrisonersDilemma.Logic.Services
                 {
                     //get players for next population
                     Population newPopulation = _populationService.GetNewPopulation(population);
+                    mutationsCount += newPopulation.MutationsCount;
                     players = newPopulation.Players;
                 }
             }
@@ -74,7 +76,7 @@ namespace PrisonersDilemma.Logic.Services
             simulation.FinishDate = DateTime.Now;
             simulation.PopulationsCompleated = currentPopulation;
             simulation.Winner = isPopulationConsistent ? players.FirstOrDefault() : null;
-            simulation.MutationsCount = simulation.Populations.Sum(p => p.MutationsCount);
+            simulation.MutationsCount = mutationsCount;
             await _simulationRepository.UpdateAsync(simulation);
 
             return simulation;

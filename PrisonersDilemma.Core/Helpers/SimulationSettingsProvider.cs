@@ -10,18 +10,26 @@ namespace PrisonersDilemma.Core.Helpers
     {
         public SimulationSettings GetSimulationSettings()
         {
-            string configKey = "PoplationsLimit";
-            int poplationsLimit = 10;
-            try
-            {
-                poplationsLimit = Convert.ToInt32(ConfigurationManager.AppSettings[configKey]);
-            }
-            catch (Exception e)
-            {
-                throw new FormatException($"Couldnt parse {configKey} value", e);
-            }
-            return new SimulationSettings() { PoplationsLimit = poplationsLimit };
+            var configKeys = new List<string>() { "PoplationsLimit", "MutationChancePercent" };
+            var configValues = new Dictionary<string, int>();
 
+            foreach (string key in configKeys)
+            {
+                try
+                {
+                    configValues[key] = Convert.ToInt32(ConfigurationManager.AppSettings[key]);
+                }
+                catch (Exception e)
+                {
+                    throw new FormatException($"Couldnt parse config {key} value", e);
+                }
+            }
+
+            return new SimulationSettings()
+            {
+                PoplationsLimit = configValues["PoplationsLimit"],
+                MutationChancePercent = configValues["MutationChancePercent"]
+            };
         }
     }
 }

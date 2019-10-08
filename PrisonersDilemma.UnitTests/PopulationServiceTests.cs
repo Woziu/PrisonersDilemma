@@ -1,6 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using PrisonersDilemma.Core.Helpers;
 using PrisonersDilemma.Core.Models;
+using PrisonersDilemma.Core.Settings;
 using PrisonersDilemma.Logic.Services;
 using System;
 using System.Collections.Generic;
@@ -16,6 +18,7 @@ namespace PrisonersDilemma.UnitTests
         public void Scores_Are_Correct_After_Evaluation()
         {
             var gameServiceMock = new Mock<IGameService>();
+            var simulationSettingsProviderMock = new Mock<ISimulationSettingsProvider>();
 
             var rounds = new List<Round>();
             for (int i = 0; i < 10; i++)
@@ -26,7 +29,10 @@ namespace PrisonersDilemma.UnitTests
             gameServiceMock.Setup(g => g.Play(It.IsAny<Player>(), It.IsAny<Player>()))
                 .Returns(new Game() { Rounds = rounds });
 
-            var populationService = new PopulationService(gameServiceMock.Object);
+            simulationSettingsProviderMock.Setup(s => s.GetSimulationSettings())
+                .Returns(new SimulationSettings() { MutationChancePercent = 0 });
+
+            var populationService = new PopulationService(gameServiceMock.Object, simulationSettingsProviderMock.Object);
 
             Player firstPlayer = new Player()
             {
@@ -50,8 +56,12 @@ namespace PrisonersDilemma.UnitTests
         public void Population_Is_Consistent()
         {
             var gameServiceMock = new Mock<IGameService>();
+            var simulationSettingsProviderMock = new Mock<ISimulationSettingsProvider>();
 
-            var populationService = new PopulationService(gameServiceMock.Object);
+            simulationSettingsProviderMock.Setup(s => s.GetSimulationSettings())
+                .Returns(new SimulationSettings() { MutationChancePercent = 0 });
+
+            var populationService = new PopulationService(gameServiceMock.Object, simulationSettingsProviderMock.Object);
 
             var players = new List<Player>();
             for (int i = 0; i < 10; i++)
@@ -67,8 +77,12 @@ namespace PrisonersDilemma.UnitTests
         public void Population_Is_Not_Consistent()
         {
             var gameServiceMock = new Mock<IGameService>();
+            var simulationSettingsProviderMock = new Mock<ISimulationSettingsProvider>();
 
-            var populationService = new PopulationService(gameServiceMock.Object);
+            simulationSettingsProviderMock.Setup(s => s.GetSimulationSettings())
+                .Returns(new SimulationSettings() { MutationChancePercent = 0 });
+
+            var populationService = new PopulationService(gameServiceMock.Object, simulationSettingsProviderMock.Object);
 
             var players = new List<Player>();
             for (int i = 0; i < 10; i++)
@@ -85,8 +99,12 @@ namespace PrisonersDilemma.UnitTests
         public void New_Population_Is_Consistent()
         {
             var gameServiceMock = new Mock<IGameService>();
+            var simulationSettingsProviderMock = new Mock<ISimulationSettingsProvider>();
 
-            var populationService = new PopulationService(gameServiceMock.Object);
+            simulationSettingsProviderMock.Setup(s => s.GetSimulationSettings())
+                .Returns(new SimulationSettings() { MutationChancePercent = 0 });
+
+            var populationService = new PopulationService(gameServiceMock.Object, simulationSettingsProviderMock.Object);
 
             var players = new List<Player>();
             for (int i = 0; i < 9; i++)
@@ -103,8 +121,12 @@ namespace PrisonersDilemma.UnitTests
         public void New_Population_Players_Count_Did_Not_Change()
         {
             var gameServiceMock = new Mock<IGameService>();
+            var simulationSettingsProviderMock = new Mock<ISimulationSettingsProvider>();
 
-            var populationService = new PopulationService(gameServiceMock.Object);
+            simulationSettingsProviderMock.Setup(s => s.GetSimulationSettings())
+                .Returns(new SimulationSettings() { MutationChancePercent = 0 });
+
+            var populationService = new PopulationService(gameServiceMock.Object, simulationSettingsProviderMock.Object);
 
             var players = new List<Player>();
             for (int i = 0; i < 9; i++)

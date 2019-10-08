@@ -1,4 +1,6 @@
-﻿using PrisonersDilemma.Core.Models;
+﻿using PrisonersDilemma.Core.Helpers;
+using PrisonersDilemma.Core.Models;
+using PrisonersDilemma.Core.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +10,13 @@ namespace PrisonersDilemma.Logic.Services
     public class PopulationService : IPopulationService
     {
         private readonly IGameService _gameService;
+        private readonly SimulationSettings _simulationSettins;
 
-        public PopulationService(IGameService gameService)
+        public PopulationService(IGameService gameService, 
+            ISimulationSettingsProvider simulationSettingsProvider)
         {
             _gameService = gameService;
+            _simulationSettins = simulationSettingsProvider.GetSimulationSettings();
         }
 
         public Population Evaluate(List<Player> players)
@@ -82,7 +87,7 @@ namespace PrisonersDilemma.Logic.Services
                     }
                     try
                     {
-                        if (canMutate && randomNumer.Next(99) == 33)
+                        if (canMutate && randomNumer.Next(99) < _simulationSettins.MutationChancePercent)
                         {
                             playerToAdd = mutatedPlayer;
                             mutationsCount++;
@@ -102,8 +107,7 @@ namespace PrisonersDilemma.Logic.Services
                     {
 
                     }
-                }
-                
+                }                
             }            
             return new Population() { Players = newPlayersList, MutationsCount = mutationsCount };
         }
