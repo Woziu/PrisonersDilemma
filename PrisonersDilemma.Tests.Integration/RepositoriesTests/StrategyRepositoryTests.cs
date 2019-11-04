@@ -49,13 +49,14 @@ namespace PrisonersDilemma.Tests.Integration.RepositoriesTests
 
             var strategies = new List<Strategy>()
             {
-                NoMemoryStrategies.GetSimpleCheater(),
-                NoMemoryStrategies.GetSimpleCooperator(),
-                OneRoundStrategies.GetCopycat(),
-                OneRoundStrategies.GetCheaterCopycat(),
-                OneRoundStrategies.GetReverser(),
-                OneRoundStrategies.GetCheaterReverser(),
-                TwoRoundStrategies.GetGoodStrategy()
+                //NoMemoryStrategies.GetSimpleCheater(),
+                //NoMemoryStrategies.GetSimpleCooperator(),
+                //OneRoundStrategies.GetCopycat(),
+                //OneRoundStrategies.GetCheaterCopycat(),
+                //OneRoundStrategies.GetReverser(),
+                //OneRoundStrategies.GetCheaterReverser(),
+                //TwoRoundStrategies.GetGoodStrategy()
+                TwoRoundStrategies.GetStrategyX()
             };
 
             var newStrategies = new List<string>();

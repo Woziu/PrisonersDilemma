@@ -48,7 +48,7 @@ namespace PrisonersDilemma.Logic.Services
                 if (selectedMove == MoveType.Undefined)
                 {
                     //TODO: throw or log?
-                    selectedMove = MoveType.Cooperate;
+                    selectedMove = MoveType.Undefined;
                 }
             }
             catch (Exception ex)

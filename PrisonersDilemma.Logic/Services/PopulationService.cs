@@ -67,7 +67,7 @@ namespace PrisonersDilemma.Logic.Services
             foreach (KeyValuePair<string, int> strategyScore in scorePerStrategy)
             {
                 double percentPerStrategy = ((double)strategyScore.Value / (double)totalScore) * 100.0;
-                int newStrategyCount = (int)Math.Ceiling(population.Players.Count * (percentPerStrategy / 100));
+                int newStrategyCount = (int)Math.Round(population.Players.Count * (percentPerStrategy / 100));
 
                 bool canMutate = strategyScore.Value == minScore ? true : false;
 

@@ -3,7 +3,9 @@ using PrisonersDilemma.Logic.Services;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 namespace PrisonersDilemma.GUI
@@ -149,11 +151,60 @@ namespace PrisonersDilemma.GUI
                 Simulation sim = await _simulationService.Run(players);
                 string message = sim.Winner != null ? $"{sim.Winner.StrategyName} : {sim.Winner.Score}" : "No winner";
                 MessageBox.Show(message);
+                ExportResultsToFile(sim);
             }
             catch (Exception ex)
             {
 
             }
+        }
+
+        private void ExportResultsToFile(Simulation simulation)
+        {
+            Dictionary<string, List<string>> scorePerStrategy = simulation.EntryPlayers
+                .Select(p => p.StrategyName)
+                .Distinct()
+                .ToDictionary(k => k, v => new List<string>());
+
+            foreach(Population population in simulation.Populations)
+            {
+                foreach (string strategyName in scorePerStrategy.Keys)
+                {
+                    string strategyScore = String.Empty;
+                    if (population.ScorePerStrategy.ContainsKey(strategyName))
+                    {
+                        strategyScore = population.ScorePerStrategy[strategyName].ToString();                        
+                    }
+                    scorePerStrategy[strategyName].Add(strategyScore);
+                }
+            }
+
+            var stringToExport = new StringBuilder();
+            //add rounds row
+            stringToExport.Append("R;");
+            var rowBuilder = new StringBuilder();
+            for (int i = 1; i <= simulation.Populations.Count; i++)
+            {
+                rowBuilder.Append(i.ToString() + ";");
+            }
+            stringToExport.AppendLine(rowBuilder.ToString());
+            //add strategies rows
+            foreach (string strategyName in scorePerStrategy.Keys)
+            {
+                rowBuilder = new StringBuilder();
+                rowBuilder.Append(strategyName + ";");
+                for (int i = 0; i < scorePerStrategy[strategyName].Count; i++)
+                {
+                    rowBuilder.Append(scorePerStrategy[strategyName][i] + ";");
+                }
+                stringToExport.AppendLine(rowBuilder.ToString());
+            }
+            stringToExport.AppendLine(String.Empty);
+
+
+
+            // Write the text to a new file named "WriteFile.txt".
+            File.WriteAllText("simulationExport.csv", stringToExport.ToString());
         }
 
         private List<Player> GetPlayersForSimulation()
@@ -183,6 +234,11 @@ namespace PrisonersDilemma.GUI
                 throw new Exception("Couldnt get players for simulation", ex);
             }
             return list;
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

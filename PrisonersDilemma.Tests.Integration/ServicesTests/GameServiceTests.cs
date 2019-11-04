@@ -248,6 +248,78 @@ namespace PrisonersDilemma.Tests.Integration.ServicesTests
             Assert.AreEqual(0, secondPlayerScore);
         }
 
+        [TestMethod]
+        public void StrategyB_vs_Cooperator_Score_Is_Correct()
+        {
+            Player firstPlayer = CreatePlayer(TwoRoundStrategies.GetStrategyB());
+            Player secondPlayer = CreatePlayer(NoMemoryStrategies.GetSimpleCooperator());
+
+            Game game = gameService.Play(firstPlayer, secondPlayer);
+
+            int firstPlayerScore = game.Rounds.Sum(r => r.FirstPlayerScore);
+            int secondPlayerScore = game.Rounds.Sum(r => r.SecondPlayerScore);
+
+            Assert.IsTrue(firstPlayerScore == 46);
+            Assert.AreEqual(6, secondPlayerScore);
+        }
+
+        [TestMethod]
+        public void StrategyB_vs_Cheater_Score_Is_Correct()
+        {
+            Player firstPlayer = CreatePlayer(TwoRoundStrategies.GetStrategyB());
+            Player secondPlayer = CreatePlayer(NoMemoryStrategies.GetSimpleCheater());
+
+            Game game = gameService.Play(firstPlayer, secondPlayer);
+
+            int firstPlayerScore = game.Rounds.Sum(r => r.FirstPlayerScore);
+            int secondPlayerScore = game.Rounds.Sum(r => r.SecondPlayerScore);
+
+            Assert.IsTrue(firstPlayerScore == 9);
+            Assert.AreEqual(14, secondPlayerScore);
+        }
+
+        [TestMethod]
+        public void StrategyC_vs_Cooperator_Score_Is_Correct()
+        {
+            Player firstPlayer = CreatePlayer(TwoRoundStrategies.GetStrategyC());
+            Player secondPlayer = CreatePlayer(NoMemoryStrategies.GetSimpleCooperator());
+
+            Game game = gameService.Play(firstPlayer, secondPlayer);
+
+            int firstPlayerScore = game.Rounds.Sum(r => r.FirstPlayerScore);
+            int secondPlayerScore = game.Rounds.Sum(r => r.SecondPlayerScore);
+
+            Assert.IsTrue(firstPlayerScore == 48);
+            Assert.AreEqual(3, secondPlayerScore);
+        }
+        [TestMethod]
+        public void StrategyC_vs_Cheater_Score_Is_Correct()
+        {
+            Player firstPlayer = CreatePlayer(TwoRoundStrategies.GetStrategyC());
+            Player secondPlayer = CreatePlayer(NoMemoryStrategies.GetSimpleCheater());
+
+            Game game = gameService.Play(firstPlayer, secondPlayer);
+
+            int firstPlayerScore = game.Rounds.Sum(r => r.FirstPlayerScore);
+            int secondPlayerScore = game.Rounds.Sum(r => r.SecondPlayerScore);
+
+            Assert.IsTrue(firstPlayerScore == 9);
+            Assert.AreEqual(14, secondPlayerScore);
+        }
+        [TestMethod]
+        public void StrategyC_vs_StrategyC_Score_Is_Correct()
+        {
+            Player firstPlayer = CreatePlayer(TwoRoundStrategies.GetStrategyC());
+            Player secondPlayer = CreatePlayer(TwoRoundStrategies.GetStrategyC());
+
+            Game game = gameService.Play(firstPlayer, secondPlayer);
+
+            int firstPlayerScore = game.Rounds.Sum(r => r.FirstPlayerScore);
+            int secondPlayerScore = game.Rounds.Sum(r => r.SecondPlayerScore);
+
+            Assert.IsTrue(firstPlayerScore == 28);
+            Assert.AreEqual(28, secondPlayerScore);
+        }
         private Player CreatePlayer(Strategy strategy)
         {
             return new Player()
